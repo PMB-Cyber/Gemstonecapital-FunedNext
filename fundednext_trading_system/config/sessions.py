@@ -1,0 +1,6 @@
+# All times are UTC
+
+LONDON_SESSION = (7, 16)
+NEW_YORK_SESSION = (13, 21)
+
+FRIDAY_CLOSE_HOUR = 20

@@ -1,0 +1,206 @@
+2025-12-26 23:52:36 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-26 23:52:36 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-26 23:52:36 | INFO | 🔍 Running startup validation checks
+2025-12-26 23:52:36 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-26 23:52:36 | WARNING | EURUSD: no active trading session
+2025-12-26 23:52:36 | WARNING | GBPUSD: no active trading session
+2025-12-26 23:52:36 | WARNING | USDJPY: no active trading session
+2025-12-26 23:52:36 | WARNING | XAUUSD: no active trading session
+2025-12-26 23:52:36 | WARNING | US30: no active trading session
+2025-12-26 23:52:36 | WARNING | NDX100: no active trading session
+2025-12-26 23:52:36 | SUCCESS | ✅ Startup validation PASSED
+2025-12-26 23:52:36 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-26 23:52:36 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-26 23:52:36 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-26 23:52:36 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-26 23:52:36 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-26 23:52:36 | SUCCESS | ✅ System initialized successfully
+2025-12-26 23:52:36 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-26T20:52:36.256522', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+2025-12-26 23:52:36 | SUCCESS | 🔒 PROFIT LOCK ACTIVATED
+Equity: $6000.00
+Locked Floor: $5500.00
+2025-12-26 23:52:39 | ERROR | ❌ ML inference failed: model not fitted
+2025-12-26 23:52:40 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:40 | INFO | SIGNAL | EURUSD | BUY | score=0.70 | regime=range
+2025-12-26 23:52:40 | INFO | EURUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:52:40 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:52:40 | WARNING | Execution globally disabled
+2025-12-26 23:52:40 | WARNING | EURUSD: trade blocked — Execution globally disabled
+2025-12-26 23:52:40 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:40 | INFO | SIGNAL | GBPUSD | BUY | score=0.70 | regime=range
+2025-12-26 23:52:40 | INFO | GBPUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:52:40 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:52:40 | WARNING | Execution globally disabled
+2025-12-26 23:52:40 | WARNING | GBPUSD: trade blocked — Execution globally disabled
+2025-12-26 23:52:40 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:40 | INFO | SIGNAL | USDJPY | BUY | score=0.70 | regime=range
+2025-12-26 23:52:40 | INFO | USDJPY: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:52:40 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:52:40 | WARNING | Execution globally disabled
+2025-12-26 23:52:40 | WARNING | USDJPY: trade blocked — Execution globally disabled
+2025-12-26 23:52:41 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:41 | INFO | SIGNAL | XAUUSD | SELL | score=0.98 | regime=range
+2025-12-26 23:52:41 | INFO | XAUUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=5.000
+2025-12-26 23:52:41 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:52:41 | WARNING | Execution globally disabled
+2025-12-26 23:52:41 | WARNING | XAUUSD: trade blocked — Execution globally disabled
+2025-12-26 23:52:41 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:41 | INFO | SIGNAL | US30 | SELL | score=0.93 | regime=range
+2025-12-26 23:52:41 | INFO | US30: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.909
+2025-12-26 23:52:41 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:52:41 | WARNING | Execution globally disabled
+2025-12-26 23:52:41 | WARNING | US30: trade blocked — Execution globally disabled
+2025-12-26 23:52:41 | INFO | ✅ ML model updated successfully
+2025-12-26 23:52:41 | INFO | SIGNAL | NDX100 | BUY | score=0.70 | regime=range
+2025-12-26 23:52:41 | INFO | NDX100: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=1.667
+2025-12-26 23:52:41 | WARNING | Trade blocked — risk $100.02 exceeds max per trade $100.00
+2025-12-26 23:53:01 | WARNING | 🛑 Manual shutdown
+2025-12-26 23:53:01 | INFO | Orchestrator shutdown complete
+2025-12-26 23:53:10 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-26 23:53:10 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-26 23:53:10 | INFO | 🔍 Running startup validation checks
+2025-12-26 23:53:10 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-26 23:53:10 | WARNING | EURUSD: no active trading session
+2025-12-26 23:53:10 | WARNING | GBPUSD: no active trading session
+2025-12-26 23:53:10 | WARNING | USDJPY: no active trading session
+2025-12-26 23:53:10 | WARNING | XAUUSD: no active trading session
+2025-12-26 23:53:10 | WARNING | US30: no active trading session
+2025-12-26 23:53:10 | WARNING | NDX100: no active trading session
+2025-12-26 23:53:10 | SUCCESS | ✅ Startup validation PASSED
+2025-12-26 23:53:10 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-26 23:53:10 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-26 23:53:10 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-26 23:53:10 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-26 23:53:10 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-26 23:53:10 | SUCCESS | ✅ System initialized successfully
+2025-12-26 23:53:10 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-26T20:53:10.139400', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+2025-12-26 23:53:10 | SUCCESS | 🔒 PROFIT LOCK ACTIVATED
+Equity: $6000.00
+Locked Floor: $5500.00
+2025-12-26 23:53:17 | ERROR | ❌ ML inference failed: model not fitted
+2025-12-26 23:53:17 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:17 | INFO | SIGNAL | EURUSD | BUY | score=0.70 | regime=range
+2025-12-26 23:53:17 | INFO | EURUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:53:17 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:53:17 | WARNING | Execution globally disabled
+2025-12-26 23:53:17 | WARNING | EURUSD: trade blocked — Execution globally disabled
+2025-12-26 23:53:17 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:17 | INFO | SIGNAL | GBPUSD | BUY | score=0.70 | regime=range
+2025-12-26 23:53:17 | INFO | GBPUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:53:17 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:53:17 | WARNING | Execution globally disabled
+2025-12-26 23:53:17 | WARNING | GBPUSD: trade blocked — Execution globally disabled
+2025-12-26 23:53:18 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:18 | INFO | SIGNAL | USDJPY | SELL | score=0.74 | regime=range
+2025-12-26 23:53:18 | INFO | USDJPY: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=10.000
+2025-12-26 23:53:18 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:53:18 | WARNING | Execution globally disabled
+2025-12-26 23:53:18 | WARNING | USDJPY: trade blocked — Execution globally disabled
+2025-12-26 23:53:18 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:18 | INFO | SIGNAL | XAUUSD | SELL | score=0.87 | regime=range
+2025-12-26 23:53:18 | INFO | XAUUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=5.000
+2025-12-26 23:53:18 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:53:18 | WARNING | Execution globally disabled
+2025-12-26 23:53:18 | WARNING | XAUUSD: trade blocked — Execution globally disabled
+2025-12-26 23:53:18 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:18 | INFO | SIGNAL | US30 | SELL | score=0.92 | regime=range
+2025-12-26 23:53:18 | INFO | US30: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.909
+2025-12-26 23:53:18 | DEBUG | Execution denied: Unknown configuration.
+2025-12-26 23:53:18 | WARNING | Execution globally disabled
+2025-12-26 23:53:18 | WARNING | US30: trade blocked — Execution globally disabled
+2025-12-26 23:53:19 | INFO | ✅ ML model updated successfully
+2025-12-26 23:53:19 | INFO | SIGNAL | NDX100 | BUY | score=0.71 | regime=range
+2025-12-26 23:53:19 | INFO | NDX100: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=1.667
+2025-12-26 23:53:19 | WARNING | Trade blocked — risk $100.02 exceeds max per trade $100.00
+2025-12-26 23:53:21 | WARNING | 🛑 Manual shutdown
+2025-12-26 23:53:21 | INFO | Orchestrator shutdown complete
+2025-12-27 00:25:54 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-27 00:25:54 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-27 00:25:54 | INFO | 🔍 Running startup validation checks
+2025-12-27 00:25:54 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-27 00:25:54 | WARNING | EURUSD: no active trading session
+2025-12-27 00:25:54 | WARNING | GBPUSD: no active trading session
+2025-12-27 00:25:54 | WARNING | USDJPY: no active trading session
+2025-12-27 00:25:54 | WARNING | XAUUSD: no active trading session
+2025-12-27 00:25:54 | WARNING | US30: no active trading session
+2025-12-27 00:25:54 | WARNING | NDX100: no active trading session
+2025-12-27 00:25:54 | SUCCESS | ✅ Startup validation PASSED
+2025-12-27 00:25:54 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-27 00:25:54 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-27 00:25:54 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-27 00:25:54 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-27 00:25:54 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-27 00:25:54 | SUCCESS | ✅ System initialized successfully
+2025-12-27 00:25:54 | INFO | Orchestrator shutdown complete
+2025-12-27 00:26:08 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-27 00:26:08 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-27 00:26:08 | INFO | 🔍 Running startup validation checks
+2025-12-27 00:26:08 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-27 00:26:08 | WARNING | EURUSD: no active trading session
+2025-12-27 00:26:08 | WARNING | GBPUSD: no active trading session
+2025-12-27 00:26:08 | WARNING | USDJPY: no active trading session
+2025-12-27 00:26:08 | WARNING | XAUUSD: no active trading session
+2025-12-27 00:26:08 | WARNING | US30: no active trading session
+2025-12-27 00:26:08 | WARNING | NDX100: no active trading session
+2025-12-27 00:26:08 | SUCCESS | ✅ Startup validation PASSED
+2025-12-27 00:26:08 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-27 00:26:08 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-27 00:26:08 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-27 00:26:08 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-27 00:26:08 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-27 00:26:08 | SUCCESS | ✅ System initialized successfully
+2025-12-27 00:26:08 | INFO | Orchestrator shutdown complete
+2025-12-27 00:26:46 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-27 00:26:46 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-27 00:26:46 | INFO | 🔍 Running startup validation checks
+2025-12-27 00:26:46 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-27 00:26:46 | WARNING | EURUSD: no active trading session
+2025-12-27 00:26:46 | WARNING | GBPUSD: no active trading session
+2025-12-27 00:26:46 | WARNING | USDJPY: no active trading session
+2025-12-27 00:26:46 | WARNING | XAUUSD: no active trading session
+2025-12-27 00:26:46 | WARNING | US30: no active trading session
+2025-12-27 00:26:46 | WARNING | NDX100: no active trading session
+2025-12-27 00:26:46 | SUCCESS | ✅ Startup validation PASSED
+2025-12-27 00:26:46 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-27 00:26:46 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-27 00:26:46 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-27 00:26:46 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-27 00:26:46 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-27 00:26:46 | SUCCESS | ✅ System initialized successfully
+2025-12-27 00:26:46 | INFO | Orchestrator shutdown complete
+2025-12-27 00:27:01 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-27 00:27:01 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-27 00:27:01 | INFO | 🔍 Running startup validation checks
+2025-12-27 00:27:01 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-27 00:27:01 | WARNING | EURUSD: no active trading session
+2025-12-27 00:27:01 | WARNING | GBPUSD: no active trading session
+2025-12-27 00:27:01 | WARNING | USDJPY: no active trading session
+2025-12-27 00:27:01 | WARNING | XAUUSD: no active trading session
+2025-12-27 00:27:01 | WARNING | US30: no active trading session
+2025-12-27 00:27:01 | WARNING | NDX100: no active trading session
+2025-12-27 00:27:01 | SUCCESS | ✅ Startup validation PASSED
+2025-12-27 00:27:01 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-27 00:27:01 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-27 00:27:01 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-27 00:27:01 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-27 00:27:01 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-27 00:27:01 | SUCCESS | ✅ System initialized successfully
+2025-12-27 00:27:01 | INFO | Orchestrator shutdown complete
+2025-12-27 00:59:46 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-27 00:59:52 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-27 00:59:52 | INFO | 🔍 Running startup validation checks
+2025-12-27 00:59:52 | INFO | Account | Balance=6000.00 | FreeMargin=6000.00
+2025-12-27 00:59:52 | WARNING | EURUSD: no active trading session
+2025-12-27 00:59:52 | WARNING | GBPUSD: no active trading session
+2025-12-27 00:59:52 | WARNING | USDJPY: no active trading session
+2025-12-27 00:59:52 | WARNING | XAUUSD: no active trading session
+2025-12-27 00:59:52 | WARNING | US30: no active trading session
+2025-12-27 00:59:52 | WARNING | NDX100: no active trading session
+2025-12-27 00:59:52 | SUCCESS | ✅ Startup validation PASSED
+2025-12-27 00:59:52 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+2025-12-27 00:59:52 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+2025-12-27 00:59:52 | SUCCESS | ML Model and Stats loaded successfully.
+2025-12-27 00:59:52 | INFO | ⏳ Waiting for market to be ready (spread stabilization)
+2025-12-27 00:59:52 | SUCCESS | ✅ Market ready — spreads acceptable
+2025-12-27 00:59:52 | SUCCESS | ✅ System initialized successfully
+2025-12-27 00:59:52 | INFO | Orchestrator shutdown complete
