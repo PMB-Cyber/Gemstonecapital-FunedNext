@@ -1,6 +1,7 @@
 # =========================================================
 # GENERAL
 # =========================================================
+ENVIRONMENT = "development"  # "development" or "production"
 TIMEFRAME_BARS = 300
 LOOP_SLEEP_SECONDS = 60
 PER_SYMBOL_THROTTLE = 0.3
@@ -16,11 +17,22 @@ TP_CLOSE_PERCENTS = (0.3, 0.3)
 # =========================================================
 # EXECUTION MODES
 # =========================================================
-DRY_RUN = False
-REPLAY_MODE = False
+if ENVIRONMENT == "production":
+    DRY_RUN = False
+    REPLAY_MODE = False
+    ACCOUNT_PHASE = "CHALLENGE"
+    EXECUTION_MODE = "LIVE"
+    ML_MODE = "INFERENCE"
+else:
+    DRY_RUN = True
+    REPLAY_MODE = False
+    ACCOUNT_PHASE = "CHALLENGE"
+    EXECUTION_MODE = "PAPER"
+    ML_MODE = "TRAINING"
 
 # =========================================================
 # FILE PATHS
 # =========================================================
-ML_MODEL_PATH = "model.pkl"
+MODEL_VERSION = "v1.0"
+ML_MODEL_PATH = f"model_{MODEL_VERSION}.pkl"
 STATS_PATH = "stats.pkl"

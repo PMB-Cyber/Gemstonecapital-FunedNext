@@ -16,7 +16,7 @@ from monitoring.logger import logger
 
 class MLRouter:
     def __init__(self, execution_flags):
-        self.model = GradientBoostingClassifier()
+        self.model = None  # Model will be loaded
         self.execution_flags = execution_flags
         self.is_trained = False
 
@@ -25,8 +25,8 @@ class MLRouter:
         Returns (side, confidence) or None
         """
         try:
-            if not self.is_trained:
-                raise NotFittedError("ML model not fitted yet")
+            if self.model is None:
+                raise NotFittedError("ML model not loaded yet")
 
             X = features.values
             pred_proba = self.model.predict_proba(X)[-1]  # last row
@@ -51,6 +51,7 @@ class MLRouter:
         Generates binary target: 1 if next close > current close, else 0.
         """
         try:
+            self.model = GradientBoostingClassifier()  # Initialize a new model
             df = df.copy()
             df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
             y = df['target'][:-1]  # exclude last row

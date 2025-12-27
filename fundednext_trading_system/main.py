@@ -37,7 +37,11 @@ from config.settings import (
     DRY_RUN,
     REPLAY_MODE,
     ML_MODEL_PATH,
-    STATS_PATH
+    STATS_PATH,
+    ACCOUNT_PHASE,
+    EXECUTION_MODE,
+    ML_MODE,
+    ENVIRONMENT
 )
 
 # =========================================================
@@ -251,10 +255,12 @@ def start_master_orchestrator():
     mt5_readiness_check()
     StartupValidator().validate_or_die()
 
+    logger.info(f"Environment set to: {ENVIRONMENT.upper()}")
+
     execution_flags = ExecutionFlags(
-        account_phase=AccountPhase.CHALLENGE,
-        execution_mode=ExecutionMode.LIVE,
-        ml_mode=MLMode.TRAINING,
+        account_phase=AccountPhase[ACCOUNT_PHASE],
+        execution_mode=ExecutionMode[EXECUTION_MODE],
+        ml_mode=MLMode[ML_MODE],
     )
 
     risk_manager = RiskManager()
@@ -283,11 +289,12 @@ def start_master_orchestrator():
         stats_manager.init_symbol(sym)
 
     # Load saved model and stats
-    # ml_model, stats = load_ml_model_and_stats()
-    # if ml_model:
-    #     ml_router.model = ml_model
-    # else:
-    logger.warning("No pre-trained model found. Training from scratch.")
+    ml_model, stats = load_ml_model_and_stats()
+    if ml_model:
+        ml_router.model = ml_model
+    else:
+        logger.error("No pre-trained model found. Shutting down.")
+        return
 
     if not DRY_RUN:
         wait_for_market_ready()
@@ -344,13 +351,13 @@ def start_master_orchestrator():
 
             time.sleep(LOOP_SLEEP_SECONDS)
 
-            # Save model and stats after each cycle
-            save_ml_model_and_stats(ml_router.model, stats_manager.stats)
-
     except KeyboardInterrupt:
         logger.warning("🛑 Manual shutdown")
 
     finally:
+        # Save model and stats at the end of the session, if in a training mode
+        if execution_flags.ml_mode == MLMode.TRAINING:
+            save_ml_model_and_stats(ml_router.model, stats_manager.stats)
         feed.shutdown()
         logger.info("Orchestrator shutdown complete")
 
