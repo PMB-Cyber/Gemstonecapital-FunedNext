@@ -1,0 +1,413 @@
+[H[J[3JUSING MOCK METATRADER5 MODULE
+00:28:14 | INFO | 🚀 Starting FundedNext Live Orchestrator
+00:28:14 | SUCCESS | 🎯 MT5 readiness check passed
+00:28:14 | INFO | 🔍 Running startup validation checks
+[H[J[3J💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | 0          | -                    | -          | ERR
+GBPUSD     | 0          | -                    | -          | ERR
+USDJPY     | 0          | -                    | -          | ERR
+XAUUSD     | 0          | -                    | -          | ERR
+US30       | 0          | -                    | -          | ERR
+NDX100     | 0          | -                    | -          | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+00:28:14 | INFO | Account | Balance=100000.00 | FreeMargin=100000.00
+00:28:14 | WARNING | EURUSD: no active trading session
+00:28:14 | WARNING | GBPUSD: no active trading session
+00:28:14 | WARNING | USDJPY: no active trading session
+00:28:14 | WARNING | XAUUSD: no active trading session
+00:28:14 | WARNING | US30: no active trading session
+00:28:14 | WARNING | NDX100: no active trading session
+00:28:14 | SUCCESS | ✅ Startup validation PASSED
+00:28:14 | INFO | CapitalScaler initialized | Start=$10000.00 | MaxMult=1.50× | Step=0.25
+00:28:14 | INFO | RiskManager initialized | Account=$10000.00 | DailyLimit=$500.00 | MaxLimit=$1000.00
+00:28:14 | WARNING | No pre-trained model found. Training from scratch.
+00:28:14 | SUCCESS | ✅ System initialized successfully
+00:28:14 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-27T00:28:14.153344', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+00:28:14 | SUCCESS | 🔒 PROFIT LOCK ACTIVATED
+Equity: $100000.00
+Locked Floor: $52500.00
+00:28:14 | ERROR | ❌ ML inference failed: model not fitted
+00:28:15 | ERROR | ❌ ML inference failed: model not fitted
+00:28:15 | INFO | ✅ ML model updated successfully
+00:28:15 | INFO | SIGNAL | EURUSD | SELL | score=0.70 | regime=range
+00:28:15 | INFO | EURUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.204
+00:28:15 | WARNING | EURUSD: Execution globally disabled
+00:28:15 | WARNING | EURUSD: trade blocked — Execution globally disabled
+00:28:15 | INFO | ✅ ML model updated successfully
+00:28:15 | INFO | SIGNAL | GBPUSD | BUY | score=0.70 | regime=range
+00:28:15 | INFO | GBPUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.159
+00:28:15 | WARNING | Trade blocked — risk $100.17 exceeds max per trade $100.00
+00:28:15 | INFO | ✅ ML model updated successfully
+00:28:15 | INFO | SIGNAL | USDJPY | SELL | score=0.93 | regime=range
+00:28:15 | INFO | USDJPY: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.189
+00:28:15 | WARNING | Trade blocked — risk $100.17 exceeds max per trade $100.00
+[H[J[3J00:28:16 | INFO | ✅ ML model updated successfully
+00:28:16 | INFO | SIGNAL | XAUUSD | SELL | score=0.71 | regime=range
+00:28:16 | INFO | XAUUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.179
+00:28:16 | WARNING | Trade blocked — risk $100.24 exceeds max per trade $100.00
+00:28:16 | INFO | ✅ ML model updated successfully
+00:28:16 | INFO | SIGNAL | US30 | SELL | score=0.80 | regime=range
+00:28:16 | INFO | US30: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.164
+00:28:16 | WARNING | Trade blocked — risk $100.04 exceeds max per trade $100.00
+00:28:16 | INFO | ✅ ML model updated successfully
+00:28:16 | INFO | SIGNAL | NDX100 | BUY | score=0.78 | regime=range
+00:28:16 | INFO | NDX100: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.185
+00:28:16 | WARNING | NDX100: Execution globally disabled
+00:28:16 | WARNING | NDX100: trade blocked — Execution globally disabled
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+00:28:25 | SUCCESS | ML Model and Stats saved successfully.
+00:28:25 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-27T00:28:25.378773', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+Exception in thread Thread-32 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+Exception in thread Thread-33 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+Exception in thread Thread-34 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+Exception in thread Thread-35 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+[H[J[3JException in thread Thread-36 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+Exception in thread Thread-37 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 105, in symbol_worker
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/fundednext_trading_system/execution/mt5_data_feed.py", line 12, in get_candles
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M1, 0, count)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'MetaTrader5' has no attribute 'copy_rates_from_pos'
+[H[J[3J[H[J[3J[H[J[3J[H[J[3J[H[J[3J[H[J[3J[H[J[3J💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | ERR        | ERR                  | ERR        | ERR
+GBPUSD     | ERR        | ERR                  | ERR        | ERR
+USDJPY     | ERR        | ERR                  | ERR        | ERR
+XAUUSD     | ERR        | ERR                  | ERR        | ERR
+US30       | ERR        | ERR                  | ERR        | ERR
+NDX100     | ERR        | ERR                  | ERR        | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+00:29:00 | SUCCESS | ML Model and Stats saved successfully.
+00:29:00 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-27T00:29:00.657561', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+Exception in thread Thread-14 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+[H[J[3JException in thread Thread-15 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+Exception in thread Thread-16 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+Exception in thread Thread-17 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+Exception in thread Thread-18 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+Exception in thread Thread-19 (symbol_worker):
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/fundednext_trading_system/main.py", line 113, in symbol_worker
+    partial_tp_manager.manage(symbol, df)
+  File "/app/fundednext_trading_system/execution/partial_tp_manager.py", line 31, in manage
+    positions = mt5.positions_get(symbol=symbol)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: positions_get() got an unexpected keyword argument 'symbol'
+[H[J[3J[H[J[3J[H[J[3J💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | 0          | -                    | -          | ERR
+GBPUSD     | 0          | -                    | -          | ERR
+USDJPY     | 0          | -                    | -          | ERR
+XAUUSD     | 0          | -                    | -          | ERR
+US30       | 0          | -                    | -          | ERR
+NDX100     | 0          | -                    | -          | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | 0          | -                    | -          | ERR
+GBPUSD     | 0          | -                    | -          | ERR
+USDJPY     | 0          | -                    | -          | ERR
+XAUUSD     | 0          | -                    | -          | ERR
+US30       | 0          | -                    | -          | ERR
+NDX100     | 0          | -                    | -          | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | 0          | -                    | -          | ERR
+GBPUSD     | 0          | -                    | -          | ERR
+USDJPY     | 0          | -                    | -          | ERR
+XAUUSD     | 0          | -                    | -          | ERR
+US30       | 0          | -                    | -          | ERR
+NDX100     | 0          | -                    | -          | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard
+
+SYMBOL     | POSITIONS  | PARTIAL_TP           | TRAIL_SL   | ML_STATUS
+-----------------------------------------------------------------------------
+EURUSD     | 0          | -                    | -          | ERR
+GBPUSD     | 0          | -                    | -          | ERR
+USDJPY     | 0          | -                    | -          | ERR
+XAUUSD     | 0          | -                    | -          | ERR
+US30       | 0          | -                    | -          | ERR
+NDX100     | 0          | -                    | -          | ERR
+
+💰 Balance: 10000.00 | Daily Loss: 0.00
+
+⏱️ Refreshing every 15 seconds...
+00:29:16 | SUCCESS | ML Model and Stats saved successfully.
+00:29:16 | INFO | 📸 Session snapshot | {'timestamp': '2025-12-27T00:29:16.786843', 'account_phase': 'challenge', 'execution_mode': 'live', 'ml_mode': 'training', 'daily_loss': 0.0, 'max_loss_breached': False}
+00:29:17 | INFO | ✅ ML model updated successfully
+00:29:17 | INFO | SIGNAL | EURUSD | BUY | score=0.97 | regime=range
+00:29:17 | INFO | EURUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.169
+00:29:17 | WARNING | EURUSD: Execution globally disabled
+00:29:17 | WARNING | EURUSD: trade blocked — Execution globally disabled
+00:29:17 | INFO | ✅ ML model updated successfully
+00:29:17 | INFO | SIGNAL | GBPUSD | BUY | score=0.70 | regime=range
+00:29:17 | INFO | GBPUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.154
+00:29:17 | WARNING | Trade blocked — risk $100.10 exceeds max per trade $100.00
+00:29:17 | INFO | ✅ ML model updated successfully
+00:29:17 | INFO | SIGNAL | USDJPY | SELL | score=0.84 | regime=range
+00:29:17 | INFO | USDJPY: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.227
+00:29:17 | WARNING | USDJPY: Execution globally disabled
+00:29:17 | WARNING | USDJPY: trade blocked — Execution globally disabled
+00:29:17 | INFO | ✅ ML model updated successfully
+00:29:17 | INFO | SIGNAL | XAUUSD | BUY | score=0.70 | regime=range
+00:29:17 | INFO | XAUUSD: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.141
+00:29:17 | WARNING | Trade blocked — risk $100.11 exceeds max per trade $100.00
+00:29:18 | INFO | ✅ ML model updated successfully
+00:29:18 | INFO | SIGNAL | US30 | SELL | score=0.70 | regime=range
+00:29:18 | INFO | US30: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.161
+00:29:18 | WARNING | US30: Execution globally disabled
+00:29:18 | WARNING | US30: trade blocked — Execution globally disabled
+00:29:18 | INFO | ✅ ML model updated successfully
+00:29:18 | INFO | SIGNAL | NDX100 | SELL | score=0.94 | regime=range
+00:29:18 | INFO | NDX100: position size | base=$100.00 | mult=1.00× | final=$100.00 | vol=0.164
+00:29:18 | WARNING | Trade blocked — risk $100.04 exceeds max per trade $100.00
