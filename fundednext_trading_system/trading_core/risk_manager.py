@@ -203,7 +203,7 @@ class RiskManager:
         return self.total_loss >= MAX_LOSS_LIMIT
 
     def daily_loss_breached(self) -> bool:
-        return self.daily_loss >= DAILY_LOS_LIMIT
+        return self.daily_loss >= DAILY_LOSS_LIMIT
 
     # =========================
     # STATUS / HEARTBEAT

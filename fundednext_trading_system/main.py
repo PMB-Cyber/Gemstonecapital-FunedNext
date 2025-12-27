@@ -1,205 +1,361 @@
 import time
+import threading
+import MetaTrader5 as mt5
+import pandas as pd
+import pickle
 import os
 
 from config.allowed_symbols import ALLOWED_SYMBOLS
-from config.execution_flags import is_execution_allowed
+from execution.symbol_stats_manager import SymbolStatsManager
+from monitoring.logger import logger
+from monitoring.profit_lock import check_profit_lock
+from monitoring.equity_kill_switch import is_locked
+from monitoring.startup_validator import StartupValidator
+from monitoring.heartbeat import print_status as heartbeat_console
+from monitoring.discord_logger import broadcast, send_discord_update
 
-from execution.session_filter import SessionFilter
+from trading_core.risk_manager import RiskManager
+from trading_core.execution_flags import ExecutionFlags, AccountPhase, ExecutionMode, MLMode
+from trading_core.trade_gatekeeper import TradeGatekeeper
+from trading_core.ml_router import MLRouter
+from trading_core.session_controller import SessionController
+from trading_core.signal_engine import SignalEngine
+
+from execution.mt5_data_feed import MT5DataFeed
+from execution.order_router import OrderRouter
 from execution.trailing_sl_manager import TrailingSLManager
 from execution.partial_tp_manager import PartialTPManager
 
-from monitoring.profit_lock import check_profit_lock
-from monitoring.equity_kill_switch import is_locked, get_lock_reason
-from monitoring.logger import logger
-from monitoring.heartbeat import print_status
+from config.settings import (
+    TIMEFRAME_BARS,
+    LOOP_SLEEP_SECONDS,
+    PER_SYMBOL_THROTTLE,
+    ATR_PERIOD,
+    ATR_SL_MULTIPLIER,
+    ATR_TP_MULTIPLIERS,
+    TP_CLOSE_PERCENTS,
+    DRY_RUN,
+    REPLAY_MODE,
+    ML_MODEL_PATH,
+    STATS_PATH
+)
 
-from trading_core.signal_engine import SignalEngine
-from trading_core.risk_manager import RiskManager
+# =========================================================
+# MARKET READY / SPREAD CHECK
+# =========================================================
+def wait_for_market_ready(max_wait_seconds: int = 600):
+    logger.info("⏳ Waiting for market to be ready (spread stabilization)")
+    start = time.time()
 
-from execution.mt5_executor import MT5Executor
-from execution.mt5_data_feed import MT5DataFeed
+    while True:
+        all_ok = True
+        for symbol in ALLOWED_SYMBOLS:
+            tick = mt5.symbol_info_tick(symbol)
+            info = mt5.symbol_info(symbol)
 
+            if tick is None or info is None:
+                logger.warning(f"{symbol}: tick/info unavailable")
+                all_ok = False
+                continue
 
-# =========================
-# CONFIG
-# =========================
-TIMEFRAME_BARS = 300
-LOOP_SLEEP_SECONDS = 60
+            spread_pts = abs(tick.ask - tick.bid) / info.point
+            if spread_pts > max(30, spread_pts * 1.5):
+                logger.warning(f"{symbol}: spread too high ({spread_pts:.1f} pts)")
+                all_ok = False
 
-STOP_LOSS_PIPS = 10
-TAKE_PROFIT_PIPS = 20
+        if all_ok:
+            logger.success("✅ Market ready — spreads acceptable")
+            return
 
+        if time.time() - start > max_wait_seconds:
+            logger.warning("⏰ Max wait reached — proceeding anyway")
+            return
 
-# =========================
-# MAIN LOOP
-# =========================
-def start_trading_system():
-    logger.info("🚀 Initializing FundedNext Trading System")
+        time.sleep(5)
 
-    feed = MT5DataFeed()
-    executor = MT5Executor()
-    signal_engine = SignalEngine(confidence_threshold=0.7)
-    risk_manager = RiskManager()
+# =========================================================
+# REGIME DETECTION
+# =========================================================
+def detect_market_regime(df: pd.DataFrame, ma_period: int = 50) -> str:
+    if len(df) < ma_period + 2:
+        return "range"
 
-    trailing_sl_manager = TrailingSLManager()
-    partial_tp_manager = PartialTPManager()
+    ma = df["close"].rolling(ma_period).mean()
+    slope = ma.iloc[-1] - ma.iloc[-2]
+    threshold = df["close"].std() * 0.1
 
-    session_filter = SessionFilter(
-        allow_london=True,
-        allow_ny=True,
+    return "trend" if abs(slope) > threshold else "range"
+
+# =========================================================
+# SYMBOL WORKER
+# =========================================================
+def symbol_worker(
+    symbol: str,
+    feed: MT5DataFeed,
+    signal_engine: SignalEngine,
+    ml_router: MLRouter,
+    risk_manager: RiskManager,
+    trade_gatekeeper: TradeGatekeeper,
+    order_router: OrderRouter,
+    partial_tp_manager: PartialTPManager,
+    trailing_sl_manager: TrailingSLManager,
+    execution_flags: ExecutionFlags,
+    stats_manager: SymbolStatsManager,
+):
+    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+    if df is None or df.empty or len(df) < 60:
+        logger.debug(f"{symbol}: insufficient candle data")
+        return
+
+    # -----------------------------------------------------
+    # Manage open positions
+    # -----------------------------------------------------
+    partial_tp_manager.manage(symbol, df)
+    trailing_sl_manager.manage(symbol, df)
+
+    # -----------------------------------------------------
+    # Regime detection
+    # -----------------------------------------------------
+    regime = detect_market_regime(df)
+    stats_manager.stats[symbol]["regime"] = regime
+
+    # -----------------------------------------------------
+    # Feature prep + ML inference
+    # -----------------------------------------------------
+    features = signal_engine.prepare_features(df, regime=regime)
+    ml_signal = ml_router.infer(features)
+
+    # Confidence gating
+    if ml_signal and ml_signal[1] < 0.7:
+        ml_signal = None  # Use rule-based signal if confidence is low
+
+    if execution_flags.ml_mode == MLMode.TRAINING:
+        ml_router.update_model(features, df)
+
+    # -----------------------------------------------------
+    # Rule-based fallback ALWAYS allowed
+    # -----------------------------------------------------
+    signal = ml_signal or signal_engine.generate_signal(df, symbol, regime=regime)
+    if not signal:
+        return
+
+    side, score = signal
+    logger.info(f"SIGNAL | {symbol} | {side.upper()} | score={score:.2f} | regime={regime}")
+
+    # -----------------------------------------------------
+    # Risk & position sizing
+    # -----------------------------------------------------
+    atr = trailing_sl_manager._calculate_atr(df)
+    stop_loss_pips = max(1, round(atr * ATR_SL_MULTIPLIER))
+
+    volume = risk_manager.position_size(symbol, stop_loss_pips)
+    risk_amount = stop_loss_pips * 10 * volume
+
+    if volume <= 0 or not risk_manager.can_open_trade(risk_amount):
+        return
+
+    allowed, reason = trade_gatekeeper.authorize_trade(symbol, risk_amount)
+    if not allowed:
+        logger.warning(f"{symbol}: trade blocked — {reason}")
+        return
+
+    # -----------------------------------------------------
+    # Dry-run / Replay
+    # -----------------------------------------------------
+    if DRY_RUN or REPLAY_MODE:
+        logger.info(f"{symbol}: DRY-RUN | {side.upper()} | vol={volume}")
+        stats_manager.stats[symbol]["trades"] += 1
+        return
+
+    # -----------------------------------------------------
+    # Execute order
+    # -----------------------------------------------------
+    order = order_router.route_order(
+        symbol=symbol,
+        order_type=side,
+        volume=volume,
+        stop_loss=stop_loss_pips,
+        take_profit=None,
+        comment="FundedNext Live Orchestrator",
     )
 
-    logger.success("System booted successfully")
+    if order.get("status") in ("filled", "simulated"):
+        logger.success(f"ORDER EXECUTED | {symbol} | {side.upper()} | vol={volume}")
+        stats_manager.stats[symbol]["trades"] += 1
+    else:
+        logger.error(f"{symbol}: order failed | {order}")
+
+# =========================================================
+# HEARTBEAT WORKER
+# =========================================================
+def heartbeat_worker(
+    risk_manager,
+    execution_flags,
+    feed,
+    partial_tp_manager,
+    trailing_sl_manager,
+    ml_router,
+    stats_manager,
+):
+    heartbeat_console(
+        risk_manager=risk_manager,
+        execution_flags=execution_flags,
+        feed=feed,
+        partial_tp_manager=partial_tp_manager,
+        trailing_sl_manager=trailing_sl_manager,
+        ml_router=ml_router,
+        symbol_stats=stats_manager.stats,
+        refresh_seconds=15,
+    )
+
+# =========================================================
+# MT5 READINESS CHECK
+# =========================================================
+def mt5_readiness_check():
+    if not mt5.initialize():
+        raise SystemExit("❌ MT5 initialization failed")
+
+    for symbol in ALLOWED_SYMBOLS:
+        if mt5.symbol_info(symbol) is None:
+            raise SystemExit(f"{symbol} not available")
+
+    mt5.shutdown()
+    logger.success("🎯 MT5 readiness check passed")
+
+# =========================================================
+# PERSIST ML MODEL AND STATS
+# =========================================================
+def save_ml_model_and_stats(model, stats):
+    with open(ML_MODEL_PATH, "wb") as model_file:
+        pickle.dump(model, model_file)
+    with open(STATS_PATH, "wb") as stats_file:
+        pickle.dump(stats, stats_file)
+    logger.success("ML Model and Stats saved successfully.")
+
+def load_ml_model_and_stats():
+    if os.path.exists(ML_MODEL_PATH) and os.path.exists(STATS_PATH):
+        with open(ML_MODEL_PATH, "rb") as model_file:
+            model = pickle.load(model_file)
+        with open(STATS_PATH, "rb") as stats_file:
+            stats = pickle.load(stats_file)
+        logger.success("ML Model and Stats loaded successfully.")
+        return model, stats
+    return None, None
+
+# =========================================================
+# MAIN ORCHESTRATOR
+# =========================================================
+def start_master_orchestrator():
+    logger.info("🚀 Starting FundedNext Live Orchestrator")
+
+    mt5_readiness_check()
+    StartupValidator().validate_or_die()
+
+    execution_flags = ExecutionFlags(
+        account_phase=AccountPhase.CHALLENGE,
+        execution_mode=ExecutionMode.LIVE,
+        ml_mode=MLMode.TRAINING,
+    )
+
+    risk_manager = RiskManager()
+    trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager)
+    ml_router = MLRouter(execution_flags)
+    session_controller = SessionController(execution_flags, risk_manager)
+
+    feed = MT5DataFeed()
+    signal_engine = SignalEngine(confidence_threshold=0.7)
+    order_router = OrderRouter(execution_flags)
+
+    partial_tp_manager = PartialTPManager(
+        tp_multipliers=ATR_TP_MULTIPLIERS,
+        close_percents=TP_CLOSE_PERCENTS,
+        atr_period=ATR_PERIOD,
+        atr_multiplier=ATR_SL_MULTIPLIER,
+    )
+
+    trailing_sl_manager = TrailingSLManager(
+        atr_period=ATR_PERIOD,
+        atr_multiplier=ATR_SL_MULTIPLIER,
+    )
+
+    stats_manager = SymbolStatsManager()
+    for sym in ALLOWED_SYMBOLS:
+        stats_manager.init_symbol(sym)
+
+    # Load saved model and stats
+    # ml_model, stats = load_ml_model_and_stats()
+    # if ml_model:
+    #     ml_router.model = ml_model
+    # else:
+    logger.warning("No pre-trained model found. Training from scratch.")
+
+    if not DRY_RUN:
+        wait_for_market_ready()
+
+    logger.success("✅ System initialized successfully")
+
+    threading.Thread(
+        target=heartbeat_worker,
+        args=(
+            risk_manager,
+            execution_flags,
+            feed,
+            partial_tp_manager,
+            trailing_sl_manager,
+            ml_router,
+            stats_manager,
+        ),
+        daemon=True,
+    ).start()
 
     try:
         while True:
-            # -------------------------
-            # HEARTBEAT
-            # -------------------------
-            print_status()
+            session_controller.daily_maintenance()
 
-            # -------------------------
-            # GLOBAL HARD STOPS
-            # -------------------------
-            if is_locked():
-                logger.critical(
-                    f"⛔ EQUITY LOCK ACTIVE — {get_lock_reason()}"
-                )
+            if is_locked() or not check_profit_lock() or risk_manager.hard_stop_triggered():
+                logger.warning("⛔ Trading paused — risk controls active")
                 time.sleep(300)
                 continue
 
-            if risk_manager.hard_stop_triggered():
-                logger.critical(
-                    "🚨 HARD RISK STOP — SYSTEM PAUSED"
-                )
-                time.sleep(600)
-                continue
-
-            if not check_profit_lock():
-                logger.critical(
-                    "🔒 PROFIT LOCK ACTIVE — SYSTEM PAUSED"
-                )
-                time.sleep(300)
-                continue
-
-            if not session_filter.is_trading_allowed():
-                logger.info(
-                    "⏰ Outside allowed trading session"
-                )
-                time.sleep(300)
-                continue
-
-            # -------------------------
-            # MULTI-SYMBOL LOOP
-            # -------------------------
+            threads = []
             for symbol in ALLOWED_SYMBOLS:
-                df = feed.get_candles(
-                    symbol=symbol,
-                    bars=TIMEFRAME_BARS,
+                t = threading.Thread(
+                    target=symbol_worker,
+                    args=(
+                        symbol,
+                        feed,
+                        signal_engine,
+                        ml_router,
+                        risk_manager,
+                        trade_gatekeeper,
+                        order_router,
+                        partial_tp_manager,
+                        trailing_sl_manager,
+                        execution_flags,
+                        stats_manager,
+                    ),
                 )
+                t.start()
+                threads.append(t)
+                time.sleep(PER_SYMBOL_THROTTLE)
 
-                if df is None or df.empty or len(df) < 50:
-                    logger.warning(
-                        f"{symbol}: insufficient candle data"
-                    )
-                    continue
-
-                # -------------------------
-                # POSITION MANAGEMENT
-                # -------------------------
-                partial_tp_manager.manage(symbol)
-                trailing_sl_manager.manage(symbol, df)
-
-                # -------------------------
-                # SIGNAL GENERATION
-                # -------------------------
-                signal = signal_engine.generate_signal(df, symbol)
-                if not signal:
-                    continue
-
-                side, score = signal
-
-                logger.info(
-                    f"SIGNAL | {symbol} | "
-                    f"{side.upper()} | score={score:.2f}"
-                )
-
-                # -------------------------
-                # EXECUTION ARMING GATE
-                # -------------------------
-                if not is_execution_allowed(
-                    challenge_passed=risk_manager.challenge_passed
-                ):
-                    logger.warning(
-                        f"{symbol}: execution DISARMED — "
-                        f"mode={risk_manager.mode}"
-                    )
-                    continue
-
-                # -------------------------
-                # POSITION SIZE
-                # -------------------------
-                volume = risk_manager.position_size(
-                    symbol=symbol,
-                    stop_loss_pips=STOP_LOSS_PIPS,
-                )
-
-                if volume <= 0:
-                    logger.warning(
-                        f"{symbol}: zero volume — trade skipped"
-                    )
-                    continue
-
-                risk_amount = STOP_LOSS_PIPS * 10 * volume
-
-                if not risk_manager.can_open_trade(risk_amount):
-                    logger.warning(
-                        f"{symbol}: risk rules block trade"
-                    )
-                    continue
-
-                # -------------------------
-                # EXECUTION
-                # -------------------------
-                order = executor.place_order(
-                    symbol=symbol,
-                    signal=side,
-                    stop_loss_pips=STOP_LOSS_PIPS,
-                    take_profit_pips=TAKE_PROFIT_PIPS,
-                    volume=volume,
-                )
-
-                if order:
-                    logger.success(
-                        f"ORDER EXECUTED | {symbol} | "
-                        f"{side.upper()} | vol={volume}"
-                    )
-                else:
-                    logger.error(
-                        f"{symbol}: order execution failed"
-                    )
+            for t in threads:
+                t.join()
 
             time.sleep(LOOP_SLEEP_SECONDS)
 
-    except KeyboardInterrupt:
-        logger.warning("🛑 Manual shutdown detected")
+            # Save model and stats after each cycle
+            save_ml_model_and_stats(ml_router.model, stats_manager.stats)
 
-    except Exception as e:
-        logger.exception(
-            f"💥 Fatal runtime error: {e}"
-        )
+    except KeyboardInterrupt:
+        logger.warning("🛑 Manual shutdown")
 
     finally:
         feed.shutdown()
-        executor.shutdown()
-        logger.info(
-            "Trading system shutdown complete"
-        )
+        logger.info("Orchestrator shutdown complete")
 
-
-# =========================
+# =========================================================
 # ENTRY POINT
-# =========================
+# =========================================================
 if __name__ == "__main__":
-    logger.info("🚀 FundedNext Trading System STARTED")
-    start_trading_system()
+    start_master_orchestrator()
