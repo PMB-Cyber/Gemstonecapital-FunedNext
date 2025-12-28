@@ -45,27 +45,30 @@ The system is built with a modular architecture, separating concerns into distin
     ```
 
 3.  **Install dependencies:**
-    The `MetaTrader5` package has specific platform requirements.
+    The `MetaTrader5` package is required for live trading and only runs on Windows. For development on macOS or Linux, a mock module is used.
 
-    -   **On Windows:**
+    -   **On Windows (for Live Trading):**
+        Install all dependencies, including the official `MetaTrader5` package.
         ```bash
         pip install -r requirements.txt
         ```
-    -   **On macOS/Linux:**
-        A mock `MetaTrader5` module is provided for development purposes. You may need to remove the `metatrader5` line from `requirements.txt` before installing.
+    -   **On macOS/Linux (for Development):**
+        The system includes a mock `MetaTrader5` module to facilitate development. Before installing, you **must** remove or comment out the `metatrader5` line from `fundednext_trading_system/requirements.txt`.
         ```bash
-        # (Optional) Remove/comment out 'metatrader5' in requirements.txt
+        # Remove/comment out 'metatrader5' in requirements.txt, then run:
         pip install -r requirements.txt
         ```
 
 ### Configuration
 
-The primary configuration is handled in `fundednext_trading_system/config/settings.py`. The most important setting is `ENVIRONMENT`, which can be set to either `"development"` or `"production"`.
+The primary configuration is handled in `fundednext_trading_system/config/settings.py`. The most important setting is `ENVIRONMENT`, which can be set to either `"development"` or `"production"`. This flag controls not only the execution parameters but also which `MetaTrader5` module is loaded.
 
 -   **Development Mode (`ENVIRONMENT = "development"`)**:
+    -   Uses the **mock `MetaTrader5` module** located in the project directory.
     -   `DRY_RUN` is enabled (`True`), meaning no live orders will be placed.
     -   `ML_MODE` is set to `TRAINING` to allow the model to be updated.
 -   **Production Mode (`ENVIRONMENT = "production"`)**:
+    -   Loads the **real, installed `MetaTrader5` package**, enabling live trading.
     -   `DRY_RUN` is disabled (`False`).
     -   `ML_MODE` is set to `INFERENCE`, using the pre-trained model without updates.
 
