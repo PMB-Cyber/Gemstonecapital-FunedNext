@@ -15019,3 +15019,15 @@ Locked Floor: $5500.00
 2025-12-27 00:59:52 | SUCCESS | ✅ Market ready — spreads acceptable
 2025-12-27 00:59:52 | SUCCESS | ✅ System initialized successfully
 2025-12-27 00:59:52 | INFO | Orchestrator shutdown complete
+2025-12-28 04:39:38 | INFO | 🚀 Starting FundedNext Live Orchestrator
+2025-12-28 04:39:38 | SUCCESS | 🎯 MT5 readiness check passed
+2025-12-28 04:39:38 | INFO | 🔍 Running startup validation checks
+2025-12-28 04:39:38 | INFO | Account | Balance=100000.00 | FreeMargin=100000.00
+2025-12-28 04:39:38 | WARNING | EURUSD: no active trading session
+2025-12-28 04:39:38 | WARNING | GBPUSD: no active trading session
+2025-12-28 04:39:38 | WARNING | USDJPY: no active trading session
+2025-12-28 04:39:38 | WARNING | XAUUSD: no active trading session
+2025-12-28 04:39:38 | WARNING | US30: no active trading session
+2025-12-28 04:39:38 | WARNING | NDX100: no active trading session
+2025-12-28 04:39:38 | SUCCESS | ✅ Startup validation PASSED
+2025-12-28 04:39:38 | INFO | Environment set to: DEVELOPMENT
