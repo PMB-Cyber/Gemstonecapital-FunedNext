@@ -14,10 +14,16 @@ THIS SCRIPT DOES NOT TRADE.
 
 import sys
 import os
+# Add the project root to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from fundednext_trading_system.config.settings import ENVIRONMENT, ALLOWED_SYMBOLS
+if ENVIRONMENT != "production":
+    # In development, prepend the mock MetaTrader5 module to the path
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'MetaTrader5'))
+
 import MetaTrader5 as mt5
 from datetime import datetime
-
-from config.allowed_symbols import ALLOWED_SYMBOLS
 
 from monitoring.equity_kill_switch import (
     check_equity_limits,

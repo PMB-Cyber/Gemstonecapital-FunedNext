@@ -13,7 +13,7 @@ Displays live:
 import time
 import os
 from monitoring.logger import logger
-from config.allowed_symbols import ALLOWED_SYMBOLS
+from config.settings import ALLOWED_SYMBOLS
 
 def clear_console():
     """Clear the console for live dashboard effect."""
@@ -27,10 +27,9 @@ def print_status(
     partial_tp_manager,
     trailing_sl_manager,
     ml_router,
-    symbol_stats=None,   # <-- ADD THIS
+    symbol_stats=None,
     refresh_seconds=15,
 ):
-
     """
     Continuously prints live status of the system in the console.
     Loops until interrupted.
@@ -38,11 +37,11 @@ def print_status(
     try:
         while True:
             clear_console()
-            print("💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard\n")
+            logger.info("💓 FUNDAMENTAL HEARTBEAT | Live Trading Dashboard\n")
 
             header = f"{'SYMBOL':<10} | {'POSITIONS':<10} | {'PARTIAL_TP':<20} | {'TRAIL_SL':<10} | {'ML_STATUS':<15}"
-            print(header)
-            print("-" * len(header))
+            logger.info(header)
+            logger.info("-" * len(header))
 
             for symbol in ALLOWED_SYMBOLS:
                 # Open positions
@@ -77,21 +76,21 @@ def print_status(
 
                 # Print row
                 row = f"{symbol:<10} | {positions_count:<10} | {str(tp_status):<20} | {sl_level:<10} | {ml_status:<15}"
-                print(row)
+                logger.info(row)
 
             # Equity / Risk
             try:
                 balance = risk_manager.current_balance()
                 daily_loss = risk_manager.daily_loss
-                print(f"\n💰 Balance: {balance:.2f} | Daily Loss: {daily_loss:.2f}")
+                logger.info(f"\n💰 Balance: {balance:.2f} | Daily Loss: {daily_loss:.2f}")
             except Exception as e:
-                print(f"⚠️ Failed to fetch balance/risk info: {e}")
+                logger.error(f"⚠️ Failed to fetch balance/risk info: {e}")
 
-            print(f"\n⏱️ Refreshing every {refresh_seconds} seconds...")
+            logger.info(f"\n⏱️ Refreshing every {refresh_seconds} seconds...")
             time.sleep(refresh_seconds)
 
     except KeyboardInterrupt:
-        print("\n🛑 Heartbeat monitoring stopped manually.")
+        logger.warning("\n🛑 Heartbeat monitoring stopped manually.")
 
 
 # Optional: for threaded integration in master orchestrator
@@ -100,7 +99,7 @@ def start_heartbeat_thread(risk_manager, execution_flags, feed, partial_tp_manag
     heartbeat_thread = threading.Thread(
         target=print_status,
         args=(risk_manager, execution_flags, feed, partial_tp_manager, trailing_sl_manager, ml_router),
-        daemon=True,  # Ensures it stops when main thread exits
+        daemon=True,
     )
     heartbeat_thread.start()
     return heartbeat_thread
