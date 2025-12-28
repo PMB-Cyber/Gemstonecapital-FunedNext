@@ -1,7 +1,7 @@
 # =========================================================
 # GENERAL
 # =========================================================
-ENVIRONMENT = "development"  # "development" or "production"
+ENVIRONMENT = "production"  # "development" or "production"
 TIMEFRAME_BARS = 300
 LOOP_SLEEP_SECONDS = 60
 PER_SYMBOL_THROTTLE = 0.3
