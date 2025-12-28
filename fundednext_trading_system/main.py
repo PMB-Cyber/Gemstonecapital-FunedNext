@@ -16,7 +16,6 @@ if ENVIRONMENT == "production":
 
 import MetaTrader5 as mt5
 
-from config.allowed_symbols import ALLOWED_SYMBOLS
 from execution.symbol_stats_manager import SymbolStatsManager
 from monitoring.logger import logger
 from monitoring.profit_lock import check_profit_lock
@@ -52,7 +51,8 @@ from config.settings import (
     ACCOUNT_PHASE,
     EXECUTION_MODE,
     ML_MODE,
-    ENVIRONMENT
+    ENVIRONMENT,
+    ALLOWED_SYMBOLS,
 )
 
 # =========================================================

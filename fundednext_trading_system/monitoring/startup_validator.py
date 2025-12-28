@@ -1,6 +1,6 @@
 import MetaTrader5 as mt5
 from datetime import datetime
-from config.allowed_symbols import ALLOWED_SYMBOLS
+from config.settings import ALLOWED_SYMBOLS
 from monitoring.logger import logger
 
 # Maximum spread limits per symbol (in points)

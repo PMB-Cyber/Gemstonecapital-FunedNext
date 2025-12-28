@@ -1,0 +1,5 @@
+# Development-specific dependencies
+-e fundednext_trading_system/MetaTrader5
+pandas
+loguru
+requests

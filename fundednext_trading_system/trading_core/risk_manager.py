@@ -1,11 +1,6 @@
 from datetime import date
 from monitoring.logger import logger
-from config.fundednext_rules import (
-    ACCOUNT_BALANCE,
-    DAILY_LOSS_LIMIT,
-    MAX_LOSS_LIMIT,
-    MAX_RISK_PER_TRADE,
-)
+from config.settings import CURRENT_RULES
 from trading_core.capital_scaler import CapitalScaler
 
 
@@ -18,7 +13,7 @@ class RiskManager:
     """
 
     def __init__(self):
-        self.start_balance = ACCOUNT_BALANCE
+        self.start_balance = CURRENT_RULES["ACCOUNT_BALANCE"]
         self.current_equity = self.start_balance
 
         self.daily_loss = 0.0
@@ -32,9 +27,9 @@ class RiskManager:
 
         logger.info(
             f"RiskManager initialized | "
-            f"Account=${ACCOUNT_BALANCE:.2f} | "
-            f"DailyLimit=${DAILY_LOSS_LIMIT:.2f} | "
-            f"MaxLimit=${MAX_LOSS_LIMIT:.2f}"
+            f"Account=${self.start_balance:.2f} | "
+            f"DailyLimit=${CURRENT_RULES['DAILY_LOSS_LIMIT']:.2f} | "
+            f"MaxLimit=${CURRENT_RULES['MAX_LOSS_LIMIT']:.2f}"
         )
 
     # =========================
@@ -77,21 +72,21 @@ class RiskManager:
             logger.warning("Trade blocked — zero or negative risk")
             return False
 
-        if risk_amount > MAX_RISK_PER_TRADE:
+        if risk_amount > CURRENT_RULES["MAX_RISK_PER_TRADE"]:
             logger.warning(
                 f"Trade blocked — risk ${risk_amount:.2f} "
-                f"exceeds max per trade ${MAX_RISK_PER_TRADE:.2f}"
+                f"exceeds max per trade ${CURRENT_RULES['MAX_RISK_PER_TRADE']:.2f}"
             )
             return False
 
-        if self.daily_loss + risk_amount > DAILY_LOSS_LIMIT:
+        if self.daily_loss + risk_amount > CURRENT_RULES["DAILY_LOSS_LIMIT"]:
             logger.critical(
                 f"Trade blocked — daily loss limit breach | "
                 f"Daily=${self.daily_loss:.2f}"
             )
             return False
 
-        if self.total_loss + risk_amount > MAX_LOSS_LIMIT:
+        if self.total_loss + risk_amount > CURRENT_RULES["MAX_LOSS_LIMIT"]:
             logger.critical(
                 f"Trade blocked — max loss limit breach | "
                 f"Total=${self.total_loss:.2f}"
@@ -116,11 +111,11 @@ class RiskManager:
 
         self._reset_daily_if_new_day()
 
-        remaining_daily = max(0.0, DAILY_LOSS_LIMIT - self.daily_loss)
-        remaining_total = max(0.0, MAX_LOSS_LIMIT - self.total_loss)
+        remaining_daily = max(0.0, CURRENT_RULES["DAILY_LOSS_LIMIT"] - self.daily_loss)
+        remaining_total = max(0.0, CURRENT_RULES["MAX_LOSS_LIMIT"] - self.total_loss)
 
         base_risk = min(
-            MAX_RISK_PER_TRADE,
+            CURRENT_RULES["MAX_RISK_PER_TRADE"],
             remaining_daily,
             remaining_total
         )
@@ -136,7 +131,7 @@ class RiskManager:
         # Hard safety caps (prop-firm safe)
         scaled_risk = min(
             scaled_risk,
-            MAX_RISK_PER_TRADE,
+            CURRENT_RULES["MAX_RISK_PER_TRADE"],
             remaining_daily,
             remaining_total
         )
@@ -190,8 +185,8 @@ class RiskManager:
     # =========================
     def hard_stop_triggered(self) -> bool:
         triggered = (
-            self.daily_loss >= DAILY_LOSS_LIMIT
-            or self.total_loss >= MAX_LOSS_LIMIT
+            self.daily_loss >= CURRENT_RULES["DAILY_LOSS_LIMIT"]
+            or self.total_loss >= CURRENT_RULES["MAX_LOSS_LIMIT"]
         )
         if triggered:
             logger.critical(
@@ -200,10 +195,10 @@ class RiskManager:
         return triggered
 
     def max_loss_breached(self) -> bool:
-        return self.total_loss >= MAX_LOSS_LIMIT
+        return self.total_loss >= CURRENT_RULES["MAX_LOSS_LIMIT"]
 
     def daily_loss_breached(self) -> bool:
-        return self.daily_loss >= DAILY_LOSS_LIMIT
+        return self.daily_loss >= CURRENT_RULES["DAILY_LOSS_LIMIT"]
 
     # =========================
     # STATUS / HEARTBEAT
@@ -216,8 +211,8 @@ class RiskManager:
             "equity": round(self.current_equity, 2),
             "daily_loss": round(self.daily_loss, 2),
             "total_loss": round(self.total_loss, 2),
-            "daily_limit": DAILY_LOSS_LIMIT,
-            "max_limit": MAX_LOSS_LIMIT,
+            "daily_limit": CURRENT_RULES["DAILY_LOSS_LIMIT"],
+            "max_limit": CURRENT_RULES["MAX_LOSS_LIMIT"],
             "hard_stop": self.hard_stop_triggered(),
         }
 
