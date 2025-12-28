@@ -6,15 +6,22 @@ import os
 import sys
 
 # Conditional MT5 import:
-# If in production, remove the current directory from the path to ensure the system
-# uses the installed MetaTrader5 package instead of the local mock version.
+# To ensure the correct MetaTrader5 package is used, the system path is temporarily
+# modified in a production environment. This prevents the local mock version from
+# being loaded and restores the path immediately after the import.
 from config.settings import ENVIRONMENT
-if ENVIRONMENT == "production":
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_dir in sys.path:
-        sys.path.remove(current_dir)
 
-import MetaTrader5 as mt5
+current_dir = os.path.dirname(os.path.abspath(__file__))
+should_modify_path = (ENVIRONMENT == "production" and current_dir in sys.path)
+
+if should_modify_path:
+    sys.path.remove(current_dir)
+
+try:
+    import MetaTrader5 as mt5
+finally:
+    if should_modify_path:
+        sys.path.insert(0, current_dir)
 
 from execution.symbol_stats_manager import SymbolStatsManager
 from monitoring.logger import logger
