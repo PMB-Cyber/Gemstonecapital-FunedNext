@@ -1,100 +1,53 @@
 # FundedNext Trading System
 
-This is a sophisticated, automated trading system designed to interact with the MetaTrader 5 (MT5) platform. It leverages a combination of machine learning and rule-based strategies to execute trades, manage risk, and monitor performance in real-time.
+This is a Python-based trading system designed to interact with the MetaTrader 5 (MT5) platform.
 
-## Key Features
+## Setup
 
-- **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
-- **Automated Execution**: Interfaces directly with MT5 to execute and manage trades.
-- **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, partial take-profits, and equity-based kill switches.
-- **Real-time Monitoring**: Provides a console-based heartbeat, detailed logging, and Discord integration for remote updates.
-- **Session Control**: Manages trading sessions, including daily maintenance and market readiness checks.
-- **Centralized Configuration**: Supports distinct configurations for development and production environments through a single, environment-aware `settings.py`.
+### 1. Create a Virtual Environment
 
-## System Architecture
+It is highly recommended to use a virtual environment to manage project dependencies.
 
-The system is built with a modular architecture, separating concerns into distinct components:
+```bash
+python -m venv venv
+```
 
-- **`main.py`**: The central orchestrator that initializes all components and runs the main trading loop.
-- **`config/settings.py`**: The single source of truth for all configuration, including environment control, trading rules, and symbol lists.
-- **`trading_core/`**: The brain of the system, housing modules for signal generation (`signal_engine.py`), risk management (`risk_manager.py`), and trade authorization (`trade_gatekeeper.py`).
-- **`execution/`**: Handles all interactions with the MT5 platform.
-- **`ml/`**: Contains the machine learning components.
-- **`monitoring/`**: Provides system monitoring tools, such as the logger, heartbeat, and kill switches.
+### 2. Activate the Virtual Environment
 
-## Getting Started
+- **On Windows:**
+  ```bash
+  .\venv\Scripts\activate
+  ```
 
-### Prerequisites
+- **On macOS and Linux:**
+  ```bash
+  source venv/bin/activate
+  ```
 
-- Python 3.8+
-- MetaTrader 5 terminal installed and running
-- A valid MT5 trading account
+### 3. Install Dependencies
 
-### Installation
+Install the required packages using pip:
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd fundednext_trading_system
-    ```
+```bash
+pip install -r fundednext_trading_system/requirements.txt
+```
 
-2.  **Set up a virtual environment:**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
+In a development environment, you may need to install the mock `MetaTrader5` package:
 
-3.  **Install dependencies:**
-    -   **For Production (Windows):**
-        ```bash
-        pip install -r requirements.txt
-        ```
-    -   **For Development (macOS/Linux/Windows):**
-        Install the mock `MetaTrader5` package and other development tools.
-        ```bash
-        pip install -r dev_requirements.txt
-        ```
+```bash
+pip install -e fundednext_trading_system/MetaTrader5
+```
 
-### Configuration
+## How to Run
 
-All configuration is managed in `fundednext_trading_system/config/settings.py`. The system's behavior is primarily controlled by the `ENVIRONMENT` variable, which can be set via an environment variable or directly in the file.
+To start the application, run the `main` module from the **root of the project** using the `-m` flag:
 
--   **Production Mode (`ENVIRONMENT = "production"`)**:
-    -   Set the `ENVIRONMENT` environment variable to `"production"`.
-    -   Set `ACCOUNT_PHASE` to either `"CHALLENGE"` or `"FUNDED"`.
-    -   `DRY_RUN` is disabled (`False`).
-    -   `EXECUTION_MODE` is `"LIVE"`.
--   **Development Mode (`ENVIRONMENT = "development"`)**:
-    -   `DRY_RUN` is enabled (`True`).
-    -   `EXECUTION_MODE` is `"PAPER"`.
+```bash
+python -m fundednext_trading_system.main
+```
 
-## How to Run the System
+This ensures that the Python interpreter treats the `fundednext_trading_system` directory as a package, which is necessary for the imports to work correctly.
 
-1.  **Ensure MT5 is Running**: The MetaTrader 5 terminal must be open and logged into your trading account.
+## Go Live Checklist
 
-2.  **Run the Go-Live Validation (Production Only)**:
-    Before the first production run, execute the pre-flight validation script to ensure all systems are go.
-    ```bash
-    python -m fundednext_trading_system.go_live_validation
-    ```
-    For a detailed checklist, see `fundednext_trading_system/go_live_checklist.md`.
-
-3.  **Run the Main Orchestrator**:
-    Execute the `main.py` script from the project root directory.
-    ```bash
-    python -m fundednext_trading_system.main
-    ```
-
-### Monitoring
-
--   **Console**: The terminal will display a live heartbeat with key performance indicators.
--   **Logs**: Detailed, structured logs are saved to the `logs/` directory, separated by type (`system.log`, `errors.log`, `trades.log`).
-
-## Risk Management
-
-The system includes several layers of risk control, all configurable in `config/settings.py`:
--   **Position Sizing**: Dynamically calculated based on risk tolerance.
--   **Trailing Stop-Loss**: ATR-based trailing stops to lock in profits.
--   **Partial Take-Profits**: Predefined profit targets for partial position closes.
--   **Equity Kill Switch**: Halts trading if equity drops below a critical threshold.
--   **Profit Lock**: Pauses trading after a daily profit target is achieved.
+The `go_live_checklist.md` file is a Markdown document that outlines the steps to take before deploying the system to a live environment. It is not an executable Python script.
