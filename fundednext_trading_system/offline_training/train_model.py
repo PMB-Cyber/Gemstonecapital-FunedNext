@@ -13,7 +13,7 @@ from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter
 from trading_core.execution_flags import ExecutionFlags, MLMode
 from config.allowed_symbols import ALLOWED_SYMBOLS
-from config.settings import TIMEFRAME_BARS, ML_MODEL_PATH
+from config.settings import TIMEFRAME_BARS, MODELS_DIR, MODEL_VERSION
 from monitoring.logger import logger
 from offline_training.offline_training import MonteCarloValidator
 
@@ -24,12 +24,8 @@ def run_backtest(model, features, df):
     logger.info("Running backtest on hold-out data...")
     trade_returns = []
 
-    # Ensure the DataFrame index is a DatetimeIndex if it's not already
-    if not isinstance(df.index, pd.DatetimeIndex):
-        df.index = pd.to_datetime(df.index)
-
     # Align features index with df index
-    features.index = df.index[:len(features)]
+    features, df = features.align(df, join='inner', axis=0)
 
     for i in range(1, len(features)):
         # Ensure we don't go out of bounds for the target
@@ -60,21 +56,23 @@ def run_backtest(model, features, df):
 
 def train_and_save_model():
     """
-    Trains a machine learning model, validates it using Monte Carlo simulation,
+    Trains a machine learning model for each symbol, validates it using Monte Carlo simulation,
     and saves it if validation passes.
     """
-    logger.info("🚀 Starting offline model training process...")
+    logger.info("🚀 Starting offline model training process for each symbol...")
 
     feed = MT5DataFeed()
     signal_engine = SignalEngine(confidence_threshold=0.7)
     execution_flags = ExecutionFlags(ml_mode=MLMode.TRAINING)
-    ml_router = MLRouter(execution_flags)
     validator = MonteCarloValidator()
 
-    all_features = []
-    all_dfs = []
+    # Create models directory if it doesn't exist
+    if not os.path.exists(MODELS_DIR):
+        os.makedirs(MODELS_DIR)
+        logger.info(f"Created directory: {MODELS_DIR}")
 
     for symbol in ALLOWED_SYMBOLS:
+        logger.info(f"===== Processing symbol: {symbol} =====")
         logger.info(f"Fetching data for {symbol}...")
         df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000)
         if df is None or df.empty or len(df) < 200:
@@ -82,60 +80,54 @@ def train_and_save_model():
             continue
 
         features = signal_engine.prepare_features(df)
-        all_features.append(features)
-        all_dfs.append(df)
 
-    if not all_features:
-        logger.error("No data available for training. Exiting.")
-        feed.shutdown()
-        return
+        # Align dataframes to ensure features and target are correctly matched
+        features, df = features.align(df, join='inner', axis=0)
 
-    combined_features = pd.concat(all_features, ignore_index=True)
-    combined_df = pd.concat(all_dfs, ignore_index=True)
+        # Split data into training and validation sets (80/20 split)
+        split_index = int(len(df) * 0.8)
 
-    # Split data into training and validation sets (80/20 split)
-    split_index = int(len(combined_df) * 0.8)
+        train_df = df.iloc[:split_index]
+        val_df = df.iloc[split_index:]
 
-    train_df = combined_df.iloc[:split_index]
-    val_df = combined_df.iloc[split_index:]
+        train_features = features.iloc[:split_index]
+        val_features = features.iloc[split_index:]
 
-    train_features = combined_features.iloc[:split_index]
-    val_features = combined_features.iloc[split_index:]
+        logger.info(f"Training on {len(train_df)} data points, validating on {len(val_df)}.")
 
-    logger.info(f"Training on {len(train_df)} data points, validating on {len(val_df)}.")
+        ml_router = MLRouter(execution_flags) # Re-instantiate for a fresh model
 
-    # Train the model
-    logger.info("Training the ML model...")
-    ml_router.update_model(train_features, train_df)
+        logger.info(f"Training the ML model for {symbol}...")
+        ml_router.update_model(train_features, train_df)
 
-    # Run backtest and Monte Carlo validation
-    trade_returns = run_backtest(ml_router.model, val_features, val_df)
-    if not trade_returns:
-        logger.error("No trades were generated during backtest. Cannot validate.")
-        feed.shutdown()
-        return
+        # Run backtest and Monte Carlo validation
+        trade_returns = run_backtest(ml_router.model, val_features, val_df)
+        if not trade_returns:
+            logger.error(f"No trades were generated during backtest for {symbol}. Cannot validate.")
+            continue # Move to the next symbol
 
-    report = validator.run(trade_returns)
-    logger.info("📊 MONTE CARLO VALIDATION RESULT")
-    for k, v in report.items():
-        logger.info(f"{k}: {v}")
+        report = validator.run(trade_returns)
+        logger.info(f"📊 MONTE CARLO VALIDATION RESULT for {symbol}")
+        for k, v in report.items():
+            logger.info(f"{k}: {v}")
 
-    if not report["passed"]:
-        logger.error("❌ Model failed Monte Carlo validation. Not saving the model.")
-        feed.shutdown()
-        return
+        if not report["passed"]:
+            logger.error(f"❌ Model for {symbol} failed Monte Carlo validation. Not saving the model.")
+            continue # Move to the next symbol
 
-    logger.success("✅ Model passed Monte Carlo validation.")
+        logger.success(f"✅ Model for {symbol} passed Monte Carlo validation.")
 
-    # Save the trained model
-    try:
-        with open(ML_MODEL_PATH, "wb") as model_file:
-            pickle.dump(ml_router.model, model_file)
-        logger.success(f"✅ Model saved successfully to {ML_MODEL_PATH}")
-    except Exception as e:
-        logger.error(f"❌ Failed to save the model: {e}")
+        # Save the trained model
+        model_path = os.path.join(MODELS_DIR, f"model_{symbol}_{MODEL_VERSION}.pkl")
+        try:
+            with open(model_path, "wb") as model_file:
+                pickle.dump(ml_router.model, model_file)
+            logger.success(f"✅ Model for {symbol} saved successfully to {model_path}")
+        except Exception as e:
+            logger.error(f"❌ Failed to save the model for {symbol}: {e}")
 
     feed.shutdown()
+    logger.info("✅ Completed training process for all symbols.")
 
 if __name__ == "__main__":
     train_and_save_model()

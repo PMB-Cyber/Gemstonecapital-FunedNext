@@ -4,6 +4,7 @@ import pandas as pd
 import pickle
 import os
 import sys
+import subprocess
 
 # Conditional MT5 import:
 # To ensure the correct MetaTrader5 package is used, the system path is temporarily
@@ -43,6 +44,9 @@ from execution.order_router import OrderRouter
 from execution.trailing_sl_manager import TrailingSLManager
 from execution.partial_tp_manager import PartialTPManager
 
+from ml.retraining.retrain_model import retrain_model_for_symbol
+from ml.model_loader import load_model_for_symbol
+
 from config.settings import (
     TIMEFRAME_BARS,
     LOOP_SLEEP_SECONDS,
@@ -53,13 +57,13 @@ from config.settings import (
     TP_CLOSE_PERCENTS,
     DRY_RUN,
     REPLAY_MODE,
-    ML_MODEL_PATH,
     STATS_PATH,
     ACCOUNT_PHASE,
     EXECUTION_MODE,
     ML_MODE,
     ENVIRONMENT,
     ALLOWED_SYMBOLS,
+    RETRAIN_AFTER_N_TRADES,
 )
 
 # =========================================================
@@ -129,6 +133,11 @@ def symbol_worker(
         logger.debug(f"{symbol}: insufficient candle data")
         return
 
+    # Load model for the symbol
+    ml_router.model = load_model_for_symbol(symbol)
+    if not ml_router.model:
+        return # Skip if model not found
+
     # -----------------------------------------------------
     # Manage open positions
     # -----------------------------------------------------
@@ -145,6 +154,10 @@ def symbol_worker(
     # Feature prep + ML inference
     # -----------------------------------------------------
     features = signal_engine.prepare_features(df, regime=regime)
+
+    # Align dataframes to ensure features and target are correctly matched
+    features, df = features.align(df, join='inner', axis=0)
+
     ml_signal = ml_router.infer(features)
 
     # Confidence gating
@@ -204,6 +217,14 @@ def symbol_worker(
     if order.get("status") in ("filled", "simulated"):
         logger.success(f"ORDER EXECUTED | {symbol} | {side.upper()} | vol={volume}")
         stats_manager.stats[symbol]["trades"] += 1
+
+        # Check for retraining
+        if stats_manager.stats[symbol]["trades"] % RETRAIN_AFTER_N_TRADES == 0:
+            logger.info(f"Triggering retraining for {symbol} after {stats_manager.stats[symbol]['trades']} trades.")
+
+            # Run retraining in a separate process to avoid blocking
+            script_path = os.path.join(current_dir, "ml", "retraining", "retrain_model.py")
+            subprocess.Popen([sys.executable, script_path, symbol])
     else:
         logger.error(f"{symbol}: order failed | {order}")
 
@@ -243,26 +264,6 @@ def mt5_readiness_check():
 
     mt5.shutdown()
     logger.success("🎯 MT5 readiness check passed")
-
-# =========================================================
-# PERSIST ML MODEL AND STATS
-# =========================================================
-def save_ml_model_and_stats(model, stats):
-    with open(ML_MODEL_PATH, "wb") as model_file:
-        pickle.dump(model, model_file)
-    with open(STATS_PATH, "wb") as stats_file:
-        pickle.dump(stats, stats_file)
-    logger.success("ML Model and Stats saved successfully.")
-
-def load_ml_model_and_stats():
-    if os.path.exists(ML_MODEL_PATH) and os.path.exists(STATS_PATH):
-        with open(ML_MODEL_PATH, "rb") as model_file:
-            model = pickle.load(model_file)
-        with open(STATS_PATH, "rb") as stats_file:
-            stats = pickle.load(stats_file)
-        logger.success("ML Model and Stats loaded successfully.")
-        return model, stats
-    return None, None
 
 # =========================================================
 # MAIN ORCHESTRATOR
@@ -305,14 +306,6 @@ def start_master_orchestrator():
     stats_manager = SymbolStatsManager()
     for sym in ALLOWED_SYMBOLS:
         stats_manager.init_symbol(sym)
-
-    # Load saved model and stats
-    ml_model, stats = load_ml_model_and_stats()
-    if ml_model:
-        ml_router.model = ml_model
-    else:
-        logger.error("No pre-trained model found. Shutting down.")
-        return
 
     if not DRY_RUN:
         wait_for_market_ready()
@@ -373,9 +366,6 @@ def start_master_orchestrator():
         logger.warning("🛑 Manual shutdown")
 
     finally:
-        # Save model and stats at the end of the session, if in a training mode
-        if execution_flags.ml_mode == MLMode.TRAINING:
-            save_ml_model_and_stats(ml_router.model, stats_manager.stats)
         feed.shutdown()
         logger.info("Orchestrator shutdown complete")
 

@@ -5,6 +5,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol, capturing individual market behaviors.
+- **Incremental Training**: Automatically retrains models with new live data after a configurable number of trades to adapt to changing market conditions.
 - **Automated Execution**: Interfaces directly with MT5 to execute and manage trades.
 - **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, partial take-profits, and equity-based kill switches.
 - **Real-time Monitoring**: Provides a console-based heartbeat, detailed logging, and Discord integration for remote updates.
@@ -19,7 +21,8 @@ The system is built with a modular architecture, separating concerns into distin
 - **`config/settings.py`**: The single source of truth for all configuration, including environment control, trading rules, and symbol lists.
 - **`trading_core/`**: The brain of the system, housing modules for signal generation (`signal_engine.py`), risk management (`risk_manager.py`), and trade authorization (`trade_gatekeeper.py`).
 - **`execution/`**: Handles all interactions with the MT5 platform.
-- **`ml/`**: Contains the machine learning components.
+- **`ml/`**: Contains the machine learning components, including model loading and retraining scripts.
+- **`offline_training/`**: Houses the main script for the initial training of all symbol-specific models.
 - **`monitoring/`**: Provides system monitoring tools, such as the logger, heartbeat, and kill switches.
 
 ## Getting Started
@@ -68,19 +71,37 @@ All configuration is managed in `fundednext_trading_system/config/settings.py`. 
     -   `DRY_RUN` is enabled (`True`).
     -   `EXECUTION_MODE` is `"PAPER"`.
 
+## Machine Learning
+
+The system's ML capabilities have been upgraded to support a more robust and adaptive trading strategy.
+
+### Symbol-Specific Model Training
+
+Instead of a single global model, the system now trains a dedicated model for each symbol defined in `ALLOWED_SYMBOLS`. This allows the models to learn the unique characteristics and patterns of each financial instrument.
+
+### Incremental Training
+
+To ensure the models remain relevant in a constantly evolving market, the system implements incremental training. After a symbol has executed a predefined number of trades (configurable via `RETRAIN_AFTER_N_TRADES` in `settings.py`), a retraining process is automatically triggered. This process fetches the latest market data, appends it to the historical dataset, and retrains the model for that specific symbol.
+
 ## How to Run the System
 
 1.  **Ensure MT5 is Running**: The MetaTrader 5 terminal must be open and logged into your trading account.
 
-2.  **Run the Go-Live Validation (Production Only)**:
+2.  **Initial Model Training**:
+    Before running the main system for the first time, you must train the initial set of ML models. This script will fetch historical data for each symbol, train a model, and save it to the `fundednext_trading_system/models/` directory.
+    ```bash
+    python -m fundednext_trading_system.offline_training.train_model
+    ```
+
+3.  **Run the Go-Live Validation (Production Only)**:
     Before the first production run, execute the pre-flight validation script to ensure all systems are go.
     ```bash
     python -m fundednext_trading_system.go_live_validation
     ```
     For a detailed checklist, see `fundednext_trading_system/go_live_checklist.md`.
 
-3.  **Run the Main Orchestrator**:
-    Execute the `main.py` script from the project root directory.
+4.  **Run the Main Orchestrator**:
+    Execute the `main.py` script from the project root directory. The system will now load the symbol-specific models and begin trading.
     ```bash
     python -m fundednext_trading_system.main
     ```

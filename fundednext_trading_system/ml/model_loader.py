@@ -1,23 +1,29 @@
+
 import os
-import joblib
+import pickle
 from loguru import logger
+import sys
 
+# Adjust the Python path to include the project root
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-class ModelLoader:
-    def __init__(self, model_dir="models/latest"):
-        self.model_dir = model_dir
+from config.settings import MODELS_DIR, MODEL_VERSION
 
-    def predict(self, symbol: str, X):
-        model_path = os.path.join(self.model_dir, f"{symbol}.pkl")
+def load_model_for_symbol(symbol: str):
+    """
+    Loads a pre-trained model for a specific symbol.
+    """
+    model_path = os.path.join(MODELS_DIR, f"model_{symbol}_{MODEL_VERSION}.pkl")
 
-        if not os.path.exists(model_path):
-            logger.warning(f"No trained model found for {symbol}, skipping signal")
-            return None
+    if not os.path.exists(model_path):
+        logger.warning(f"No trained model found for {symbol} at {model_path}. ML inference will be skipped.")
+        return None
 
-        try:
-            model = joblib.load(model_path)
-            score = model.predict_proba(X)[0][1]
-            return float(score)
-        except Exception as e:
-            logger.error(f"Model inference failed for {symbol}: {e}")
-            return None
+    try:
+        with open(model_path, "rb") as model_file:
+            model = pickle.load(model_file)
+        logger.info(f"Successfully loaded model for {symbol} from {model_path}.")
+        return model
+    except Exception as e:
+        logger.error(f"Failed to load the model for {symbol} from {model_path}: {e}")
+        return None
