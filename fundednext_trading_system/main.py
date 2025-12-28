@@ -1,20 +1,9 @@
 import time
 import threading
+import MetaTrader5 as mt5
 import pandas as pd
 import pickle
 import os
-import sys
-
-# Conditional MT5 import:
-# If in production, remove the current directory from the path to ensure the system
-# uses the installed MetaTrader5 package instead of the local mock version.
-from config.settings import ENVIRONMENT
-if ENVIRONMENT == "production":
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_dir in sys.path:
-        sys.path.remove(current_dir)
-
-import MetaTrader5 as mt5
 
 from config.allowed_symbols import ALLOWED_SYMBOLS
 from execution.symbol_stats_manager import SymbolStatsManager

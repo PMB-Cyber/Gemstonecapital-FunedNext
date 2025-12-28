@@ -96,29 +96,3 @@ Locked Floor: $52500.00
 2025-12-27 00:29:18 | WARNING | US30: Execution globally disabled
 2025-12-27 00:29:18 | WARNING | US30: trade blocked — Execution globally disabled
 2025-12-27 00:29:18 | WARNING | Trade blocked — risk $100.04 exceeds max per trade $100.00
-2025-12-28 00:25:26 | SUCCESS | ✅ MT5 connected | Login=12345 | Equity=$100000.00
-2025-12-28 00:25:26 | SUCCESS | ✅ No open positions
-2025-12-28 00:25:27 | SUCCESS | ✅ Equity kill switch OK
-2025-12-28 00:25:27 | SUCCESS | ✅ Webhook kill switch OK
-2025-12-28 00:25:27 | SUCCESS | ✅ Discord kill switch BYPASSED (not required for go-live)
-2025-12-28 00:25:27 | SUCCESS | 🔒 PROFIT LOCK ACTIVATED
-Equity: $100000.00
-Locked Floor: $52500.00
-2025-12-28 00:25:27 | SUCCESS | ✅ Profit lock OK
-2025-12-28 00:25:27 | SUCCESS | ✅ Session filter initialized
-2025-12-28 00:25:48 | SUCCESS | ✅ MT5 connected | Login=12345 | Equity=$100000.00
-2025-12-28 00:25:48 | SUCCESS | ✅ No open positions
-2025-12-28 00:25:49 | SUCCESS | ✅ Equity kill switch OK
-2025-12-28 00:25:49 | SUCCESS | ✅ Webhook kill switch OK
-2025-12-28 00:25:49 | SUCCESS | ✅ Discord kill switch BYPASSED (not required for go-live)
-2025-12-28 00:25:49 | SUCCESS | 🔒 PROFIT LOCK ACTIVATED
-Equity: $100000.00
-Locked Floor: $52500.00
-2025-12-28 00:25:49 | SUCCESS | ✅ Profit lock OK
-2025-12-28 00:25:49 | SUCCESS | ✅ Session filter initialized
-2025-12-28 00:25:49 | SUCCESS | ✅ Candle feed OK | symbols=6
-2025-12-28 00:25:49 | SUCCESS | ✅ SignalEngine initialized
-2025-12-28 00:25:49 | SUCCESS | ✅ Active ML model version: v1.0.0-FROZEN
-2025-12-28 00:25:49 | SUCCESS | ✅ RiskManager OK
-2025-12-28 00:25:49 | SUCCESS | ✅ Trailing SL & Partial TP managers OK
-2025-12-28 00:25:49 | SUCCESS | ✅ SYSTEM IS CLEARED FOR LIVE TRADING

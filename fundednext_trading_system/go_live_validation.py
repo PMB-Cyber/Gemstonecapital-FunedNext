@@ -125,7 +125,7 @@ def run_validation():
     feed = MT5DataFeed()
 
     for symbol in ALLOWED_SYMBOLS:
-        df = feed.get_candles(symbol, count=300)
+        df = feed.get_candles(symbol, bars=300)
 
         if df is None or df.empty or len(df) < 50:
             fatal(f"{symbol}: candle feed invalid")
