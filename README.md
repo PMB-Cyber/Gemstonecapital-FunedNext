@@ -81,7 +81,6 @@ For live trading, the official `MetaTrader5` package is required, which is only 
 
 ```bash
 pip install -r requirements.txt
-pip install -e .
 ```
 
 #### On macOS/Linux (Development)
@@ -90,7 +89,6 @@ The system includes a mock `MetaTrader5` module to facilitate development on non
 
 ```bash
 pip install -r dev_requirements.txt
-pip install -e .
 ```
 
 ## How to Run the System

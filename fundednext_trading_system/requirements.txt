@@ -19,3 +19,4 @@ threadpoolctl==3.6.0
 tzdata==2025.3
 urllib3==2.6.2
 win32_setctime==1.2.0
+-e .

@@ -4,3 +4,4 @@ pandas
 loguru
 requests
 scikit-learn
+-e .
