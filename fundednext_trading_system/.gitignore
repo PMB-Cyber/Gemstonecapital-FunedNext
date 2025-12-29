@@ -118,3 +118,6 @@ dmypy.json
 
 # pytype static analyzer
 .pytype/
+
+# Model and stats files
+*.pkl

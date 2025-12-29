@@ -2,6 +2,21 @@
 
 This is a sophisticated, automated trading system designed to interact with the MetaTrader 5 (MT5) platform. It leverages a combination of machine learning and rule-based strategies to execute trades, manage risk, and monitor performance in real-time.
 
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [How to Run the System](#how-to-run-the-system)
+  - [1. Initial Model Training](#1-initial-model-training)
+  - [2. Go-Live Validation (Production Only)](#2-go-live-validation-production-only)
+  - [3. Run the Main Orchestrator](#3-run-the-main-orchestrator)
+- [System Architecture](#system-architecture)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
+- [Monitoring](#monitoring)
+
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
@@ -12,123 +27,97 @@ This is a sophisticated, automated trading system designed to interact with the 
 - **Real-time Monitoring**: Provides a console-based heartbeat, detailed logging, and Discord integration.
 - **Centralized Configuration**: Supports distinct configurations for development and production through environment variables.
 
-## Quick Start
-
-1.  **Install Dependencies**:
-    -   **Production (Windows)**: `pip install -r requirements.txt`
-    -   **Development (macOS/Linux)**: `pip install -r dev_requirements.txt`
-2.  **Train Initial Models**:
-    ```bash
-    ENVIRONMENT=development python -m fundednext_trading_system.offline_training.train_model
-    ```
-3.  **Run Go-Live Validation (Production Only)**:
-    ```bash
-    ENVIRONMENT=production python -m fundednext_trading_system.go_live_validation
-    ```
-4.  **Run the System**:
-    ```bash
-    # Set ENVIRONMENT and ACCOUNT_PHASE as needed
-    ENVIRONMENT=production ACCOUNT_PHASE=CHALLENGE python -m fundednext_trading_system.main
-    ```
-
----
-
-## System Architecture
-
-The system is built with a modular architecture, separating concerns into distinct components:
-
--   **`main.py`**: The central orchestrator that runs the main trading loop.
--   **`config/settings.py`**: The single source of truth for all configuration.
--   **`trading_core/`**: The brain of the system, housing modules for signal generation, risk management, and trade authorization.
--   **`execution/`**: Handles all interactions with the MT5 platform.
--   **`ml/`**: Contains the machine learning components, including model loading and retraining scripts.
--   **`offline_training/`**: Houses the script for the initial training of all symbol-specific models.
--   **`monitoring/`**: Provides system monitoring tools, such as the logger and kill switches.
-
-## Configuration
-
-The system's behavior is primarily controlled by two environment variables:
-
--   `ENVIRONMENT`: Set to `"production"` for live trading or `"development"` for local testing. This is the **most critical setting**, as it controls which `MetaTrader5` module is loaded, enables or disables dry runs, and sets the ML mode.
--   `ACCOUNT_PHASE`: Set to `"CHALLENGE"` or `"FUNDED"` to load the correct risk management rules from `config/settings.py`.
-
-### Environment-Specific Behavior
-
-| Setting          | `ENVIRONMENT="production"` | `ENVIRONMENT="development"` |
-| ---------------- | -------------------------- | --------------------------- |
-| **`DRY_RUN`**    | `False` (Live Trades)      | `True` (No Trades)          |
-| **`EXECUTION_MODE`** | `"LIVE"`                 | `"PAPER"`                 |
-| **`ML_MODE`**    | `"INFERENCE"`              | `"TRAINING"`                |
-| **`MetaTrader5`**| Real, installed package    | Mock, local module          |
-
-## Installation and Setup
+## Getting Started
 
 ### Prerequisites
 
 -   Python 3.8+
 -   MetaTrader 5 terminal installed and running (for production)
+-   Git
 
-### Dependencies
+### Installation
 
-The project maintains two separate dependency files:
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd <repository-name>
+    ```
 
--   `requirements.txt`: Contains the exact, minimal packages required for a **live production environment**.
--   `dev_requirements.txt`: Includes all production packages plus additional tools for development, such as `notebook`, `pylint`, and `black`.
+2.  **Install Dependencies:**
 
-#### On Windows (Production)
+    The project uses two different files for dependencies, depending on your environment.
 
-For live trading, the official `MetaTrader5` package is required, which is only available on Windows.
+    -   **For Production (Windows):**
+        ```bash
+        pip install -r fundednext_trading_system/requirements.txt
+        ```
+        This command installs all the necessary packages for running the system in a live trading environment.
 
-```bash
-pip install -r requirements.txt
-```
-
-#### On macOS/Linux (Development)
-
-The system includes a mock `MetaTrader5` module to facilitate development on non-Windows systems. **Do not** attempt to install the `metatrader5` package from `requirements.txt`, as it will fail.
-
-```bash
-pip install -r dev_requirements.txt
-```
+    -   **For Development (macOS/Linux):**
+        ```bash
+        pip install -r fundednext_trading_system/dev_requirements.txt
+        ```
+        This command installs all the production dependencies, plus additional tools for development.
 
 ## How to Run the System
 
 ### 1. Initial Model Training
 
-Before running the main system for the first time, you must train the initial set of ML models. This script will fetch historical data for each symbol, train a model, and save it to the `fundednext_trading_system/models/` directory.
-
-It is recommended to run this in the `development` environment to use the mock MT5 module and avoid hitting rate limits.
+Before you can run the main trading system, you need to train the initial machine learning models. This is done by running the `train_model.py` script.
 
 ```bash
 ENVIRONMENT=development python -m fundednext_trading_system.offline_training.train_model
 ```
 
+This script will:
+- Fetch historical data for each trading symbol.
+- Train a unique model for each symbol.
+- Save the trained models to the `fundednext_trading_system/models/` directory.
+
 ### 2. Go-Live Validation (Production Only)
 
-Before every production run, execute the pre-flight validation script. This script performs critical safety checks to ensure the system is ready for live trading. It verifies:
-- MT5 connectivity
-- The absence of open positions
-- Correct configuration (`ENVIRONMENT="production"`)
-- The state of all kill switches and risk locks
+Before running the system in a live trading environment, it's crucial to run the pre-flight validation script. This script performs several important safety checks to ensure that the system is ready for live trading.
 
 ```bash
 ENVIRONMENT=production python -m fundednext_trading_system.go_live_validation
 ```
 
-For a detailed checklist of manual steps, see `fundednext_trading_system/go_live_checklist.md`.
-
 ### 3. Run the Main Orchestrator
 
-Execute the `main.py` script from the project root directory. The system will load the symbol-specific models and begin trading according to the configured environment.
+Once the initial models are trained, you can run the main trading system.
 
--   **Production Example**:
+-   **Production Example:**
     ```bash
     ENVIRONMENT=production ACCOUNT_PHASE=CHALLENGE python -m fundednext_trading_system.main
     ```
--   **Development Example**:
+
+-   **Development Example:**
     ```bash
     ENVIRONMENT=development python -m fundednext_trading_system.main
     ```
+
+## System Architecture
+
+The system is designed with a modular architecture, with each component having a specific responsibility.
+
+-   `main.py`: The main entry point of the application.
+-   `config/settings.py`: Contains all the configuration settings for the system.
+-   `trading_core/`: The core logic of the trading system.
+-   `execution/`: Handles the communication with the MT5 platform.
+-   `ml/`: Contains the machine learning models and related scripts.
+-   `offline_training/`: Contains the script for training the initial models.
+-   `monitoring/`: Provides tools for monitoring the system's performance.
+
+## Configuration
+
+The system's behavior is controlled by environment variables.
+
+-   `ENVIRONMENT`: Set to `production` for live trading or `development` for local testing.
+-   `ACCOUNT_PHASE`: Set to `CHALLENGE` or `FUNDED` to load the correct risk management rules.
+
+## Troubleshooting
+
+-   **`ModuleNotFoundError`:** This error usually occurs when the project's dependencies are not installed correctly. Make sure you have run the correct `pip install` command for your environment. If you are still seeing the error, try running the command from the root directory of the project.
 
 ## Monitoring
 
