@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.exceptions import NotFittedError
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 class MLRouter:
     def __init__(self, execution_flags):

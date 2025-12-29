@@ -3,3 +3,4 @@
 pandas
 loguru
 requests
+scikit-learn

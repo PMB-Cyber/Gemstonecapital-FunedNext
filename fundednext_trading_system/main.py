@@ -128,7 +128,7 @@ def symbol_worker(
     execution_flags: ExecutionFlags,
     stats_manager: SymbolStatsManager,
 ):
-    df = feed.get_candles(symbol, TIMEFRAME_BARS)
+    df = feed.get_candles(symbol, mt5.TIMEFRAME_M1, TIMEFRAME_BARS)
     if df is None or df.empty or len(df) < 60:
         logger.debug(f"{symbol}: insufficient candle data")
         return
