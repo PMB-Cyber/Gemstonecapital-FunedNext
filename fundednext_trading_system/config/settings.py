@@ -71,6 +71,5 @@ CURRENT_RULES = PHASE_RULES[ACCOUNT_PHASE]
 # =========================================================
 # FILE PATHS
 # =========================================================
-MODEL_VERSION = "v1.0"
-ML_MODEL_PATH = f"model_{MODEL_VERSION}.pkl"
+MODELS_DIR = "fundednext_trading_system/models/"
 STATS_PATH = "stats.pkl"

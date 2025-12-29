@@ -19,10 +19,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fundednext_trading_system.config.settings import ENVIRONMENT, ALLOWED_SYMBOLS
 if ENVIRONMENT != "production":
-    # In development, prepend the mock MetaTrader5 module to the path
-    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'MetaTrader5'))
-
-import MetaTrader5 as mt5
+    from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
+else:
+    import MetaTrader5 as mt5
 from datetime import datetime
 
 from monitoring.equity_kill_switch import (
@@ -131,7 +130,7 @@ def run_validation():
     feed = MT5DataFeed()
 
     for symbol in ALLOWED_SYMBOLS:
-        df = feed.get_candles(symbol, count=300)
+        df = feed.get_candles(symbol, mt5.TIMEFRAME_M1, count=300)
 
         if df is None or df.empty or len(df) < 50:
             fatal(f"{symbol}: candle feed invalid")

@@ -9,8 +9,7 @@ from execution.mt5_data_feed import MT5DataFeed
 from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter
 from trading_core.execution_flags import ExecutionFlags, MLMode
-from config.allowed_symbols import ALLOWED_SYMBOLS
-from config.settings import TIMEFRAME_BARS, MODELS_DIR, MODEL_VERSION
+from config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS
 from monitoring.logger import logger
 from offline_training.offline_training import MonteCarloValidator
 
@@ -115,7 +114,7 @@ def train_and_save_model():
         logger.success(f"✅ Model for {symbol} passed Monte Carlo validation.")
 
         # Save the trained model
-        model_path = os.path.join(MODELS_DIR, f"model_{symbol}_{MODEL_VERSION}.pkl")
+        model_path = os.path.join(MODELS_DIR, f"model_{symbol}.pkl")
         try:
             with open(model_path, "wb") as model_file:
                 pickle.dump(ml_router.model, model_file)

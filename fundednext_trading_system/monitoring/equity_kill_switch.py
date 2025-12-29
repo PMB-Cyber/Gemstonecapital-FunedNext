@@ -1,5 +1,12 @@
-import MetaTrader5 as mt5
+from __future__ import annotations
+import os
 from datetime import date
+from fundednext_trading_system.config.settings import ENVIRONMENT
+
+if ENVIRONMENT == "development":
+    from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
+else:
+    import MetaTrader5 as mt5
 
 from monitoring.logger import logger
 from monitoring.discord_logger import broadcast
