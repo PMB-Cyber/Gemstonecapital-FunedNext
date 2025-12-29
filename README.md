@@ -16,6 +16,7 @@ This is a sophisticated, automated trading system designed to interact with the 
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 - [Monitoring](#monitoring)
+- [Change Log](#change-log)
 
 ## Key Features
 
@@ -123,3 +124,24 @@ The system's behavior is controlled by environment variables.
 
 -   **Console**: The terminal will display a live heartbeat with key performance indicators.
 -   **Logs**: Detailed logs are saved to the `logs/` directory, separated by type (`system.log`, `errors.log`, `trades.log`).
+
+## Change Log
+
+### Fix: `ModuleNotFoundError` and Project Simplification
+
+-   **`fundednext_trading_system/offline_training/train_model.py`**:
+    -   Corrected a typo in the `if __name__ == "__main__":` block.
+-   **`fundednext_trading_system/requirements.txt` and `fundednext_trading_system/dev_requirements.txt`**:
+    -   Added the `-e .` flag to both files to automatically install the project in editable mode.
+-   **`README.md`**:
+    -   Removed the separate `pip install -e .` step from the installation instructions.
+    -   Restructured the `README.md` to be more beginner-friendly.
+-   **Deleted Files**:
+    -   `main_output.log`
+    -   `model.pkl`
+    -   `stats.pkl`
+    -   `fundednext_trading_system/check_dataset.py`
+    -   `fundednext_trading_system/dry_run_report.py`
+    -   `fundednext_trading_system/test_mt5.py`
+-   **`.gitignore`**:
+    -   Added `*.pkl` to the `.gitignore` file.
