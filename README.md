@@ -47,15 +47,17 @@ The system is built with a modular architecture, separating concerns into distin
     source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
     ```
 
-3.  **Install dependencies:**
+3.  **Install dependencies and the project package:**
     -   **For Production (Windows):**
         ```bash
         pip install -r requirements.txt
+        pip install -e .
         ```
     -   **For Development (macOS/Linux/Windows):**
         Install the mock `MetaTrader5` package and other development tools.
         ```bash
         pip install -r dev_requirements.txt
+        pip install -e .
         ```
 
 ### Configuration

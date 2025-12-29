@@ -5,9 +5,6 @@ import sys
 import os
 import numpy as np
 
-# Adjust the Python path to include the project root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from execution.mt5_data_feed import MT5DataFeed
 from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter

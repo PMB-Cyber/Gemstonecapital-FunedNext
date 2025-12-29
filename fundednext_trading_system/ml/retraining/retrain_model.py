@@ -5,9 +5,6 @@ import pickle
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-# Adjust the Python path to include the project root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
 from execution.mt5_data_feed import MT5DataFeed
 from trading_core.signal_engine import SignalEngine
 from config.settings import TIMEFRAME_BARS, MODELS_DIR, MODEL_VERSION
