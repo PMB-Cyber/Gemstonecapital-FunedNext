@@ -50,11 +50,11 @@ else:
 # =========================================================
 PHASE_RULES = {
     "CHALLENGE": {
-        "ACCOUNT_BALANCE": 10_000,
-        "DAILY_LOSS_LIMIT": 500,        # 5%
-        "MAX_LOSS_LIMIT": 1_000,        # 10%
-        "MAX_RISK_PER_TRADE": 100,      # 1%
-        "PROFIT_TARGET": 800,           # 8%
+        "ACCOUNT_BALANCE": 5_000,
+        "DAILY_LOSS_LIMIT": 250,        # 5%
+        "MAX_LOSS_LIMIT": 500,        # 10%
+        "MAX_RISK_PER_TRADE": 50,      # 1%
+        "PROFIT_TARGET": 400,           # 8%
     },
     "FUNDED": {
         "ACCOUNT_BALANCE": 10_000,
