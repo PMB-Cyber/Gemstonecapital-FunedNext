@@ -275,6 +275,7 @@ def start_master_orchestrator():
     StartupValidator().validate_or_die()
 
     logger.info(f"Environment set to: {ENVIRONMENT.upper()}")
+    logger.info(f"Account Phase set to: {ACCOUNT_PHASE.upper()}")
 
     execution_flags = ExecutionFlags(
         account_phase=AccountPhase[ACCOUNT_PHASE],

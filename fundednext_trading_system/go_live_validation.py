@@ -21,7 +21,11 @@ from fundednext_trading_system.config.settings import ENVIRONMENT, ALLOWED_SYMBO
 if ENVIRONMENT != "production":
     from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
 else:
-    import MetaTrader5 as mt5
+    try:
+        import MetaTrader5 as mt5
+    except ModuleNotFoundError:
+        logger.warning("Could not import real MetaTrader5 module in production environment.")
+    sys.exit(1)
 from datetime import datetime
 
 from monitoring.equity_kill_switch import (
@@ -61,6 +65,13 @@ def ok(msg):
 def run_validation():
     logger.info("🚦 STARTING FINAL GO-LIVE VALIDATION")
     logger.info("=" * 60)
+
+    # =========================
+    # ENVIRONMENT CHECK
+    # =========================
+    if ENVIRONMENT != "production":
+        fatal(f"Validation script must be run in 'production' environment. Current: '{ENVIRONMENT}'")
+    ok(f"Environment check passed | Current: '{ENVIRONMENT}'")
 
     # =========================
     # MT5 CONNECTION
