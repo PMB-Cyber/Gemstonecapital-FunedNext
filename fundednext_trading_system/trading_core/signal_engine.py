@@ -7,7 +7,7 @@ Supports momentum + mean-reversion logic and regime detection.
 
 import pandas as pd
 import numpy as np
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 class SignalEngine:
     def __init__(self, confidence_threshold: float = 0.7):

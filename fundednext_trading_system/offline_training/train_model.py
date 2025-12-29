@@ -5,17 +5,14 @@ import sys
 import os
 import numpy as np
 
-# Adjust the Python path to include the project root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from execution.mt5_data_feed import MT5DataFeed
-from trading_core.signal_engine import SignalEngine
-from trading_core.ml_router import MLRouter
-from trading_core.execution_flags import ExecutionFlags, MLMode
-from config.allowed_symbols import ALLOWED_SYMBOLS
-from config.settings import TIMEFRAME_BARS, ML_MODEL_PATH
-from monitoring.logger import logger
-from offline_training.offline_training import MonteCarloValidator
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.ml_router import MLRouter
+from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
+from fundednext_trading_system.config.symbols_config import SYMBOLS_CONFIG
+from fundednext_trading_system.config.settings import TIMEFRAME_BARS, ML_MODEL_PATH
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.offline_training.offline_training import MonteCarloValidator
 
 def run_backtest(model, features, df):
     """
@@ -67,14 +64,18 @@ def train_and_save_model():
 
     feed = MT5DataFeed()
     signal_engine = SignalEngine(confidence_threshold=0.7)
-    execution_flags = ExecutionFlags(ml_mode=MLMode.TRAINING)
+    execution_flags = ExecutionFlags(
+        ml_mode=MLMode.TRAINING,
+        account_phase=AccountPhase.CHALLENGE,
+        execution_mode=ExecutionMode.SHADOW
+    )
     ml_router = MLRouter(execution_flags)
     validator = MonteCarloValidator()
 
     all_features = []
     all_dfs = []
 
-    for symbol in ALLOWED_SYMBOLS:
+    for symbol in SYMBOLS_CONFIG.keys():
         logger.info(f"Fetching data for {symbol}...")
         df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000)
         if df is None or df.empty or len(df) < 200:
