@@ -37,7 +37,7 @@ class DryRunReporter:
 
         while datetime.utcnow() < end:
             for symbol in ALLOWED_SYMBOLS:
-                df = self.feed.get_candles(symbol, self.bars)
+                df = self.feed.get_candles(symbol, mt5.TIMEFRAME_M1, self.bars)
                 if df is None or len(df) < 50:
                     continue
 

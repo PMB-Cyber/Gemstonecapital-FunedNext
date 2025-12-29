@@ -1,5 +1,5 @@
 from enum import Enum
-from monitoring.logger import logger  # Ensure logger is imported
+from fundednext_trading_system.monitoring.logger import logger  # Ensure logger is imported
 
 class AccountPhase(Enum):
     CHALLENGE = "challenge"
