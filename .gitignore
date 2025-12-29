@@ -60,3 +60,9 @@ local_settings.py
 # Logs
 logs/
 *.log
+
+# Custom ignores
+main_output.log
+fundednext_trading_system/models/*.pkl
+stats.pkl
+.DS_Store

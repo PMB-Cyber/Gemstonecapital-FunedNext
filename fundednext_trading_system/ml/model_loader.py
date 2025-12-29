@@ -7,13 +7,13 @@ import sys
 # Adjust the Python path to include the project root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from config.settings import MODELS_DIR, MODEL_VERSION
+from config.settings import MODELS_DIR
 
 def load_model_for_symbol(symbol: str):
     """
     Loads a pre-trained model for a specific symbol.
     """
-    model_path = os.path.join(MODELS_DIR, f"model_{symbol}_{MODEL_VERSION}.pkl")
+    model_path = os.path.join(MODELS_DIR, f"model_{symbol}.pkl")
 
     if not os.path.exists(model_path):
         logger.warning(f"No trained model found for {symbol} at {model_path}. ML inference will be skipped.")

@@ -47,57 +47,36 @@ The system is built with a modular architecture, separating concerns into distin
     source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
     ```
 
-<<<<<<< HEAD
-3.  **Install dependencies and the project package:**
-    -   **For Production (Windows):**
-=======
 3.  **Install dependencies:**
     The `MetaTrader5` package is required for live trading and only runs on Windows. For development on macOS or Linux, a mock module is used.
 
     -   **On Windows (for Live Trading):**
         Install all dependencies, including the official `MetaTrader5` package.
->>>>>>> jules-enable-production-mt5-18427936680362738310
         ```bash
         pip install -r requirements.txt
         pip install -e .
         ```
-<<<<<<< HEAD
-    -   **For Development (macOS/Linux/Windows):**
-        Install the mock `MetaTrader5` package and other development tools.
-        ```bash
-        pip install -r dev_requirements.txt
-        pip install -e .
-=======
     -   **On macOS/Linux (for Development):**
         The system includes a mock `MetaTrader5` module to facilitate development. Before installing, you **must** remove or comment out the `metatrader5` line from `fundednext_trading_system/requirements.txt`.
         ```bash
         # Remove/comment out 'metatrader5' in requirements.txt, then run:
-        pip install -r requirements.txt
->>>>>>> jules-enable-production-mt5-18427936680362738310
+        pip install -r dev_requirements.txt
+        pip install -e .
         ```
 
 ### Configuration
 
-<<<<<<< HEAD
-All configuration is managed in `fundednext_trading_system/config/settings.py`. The system's behavior is primarily controlled by the `ENVIRONMENT` variable, which can be set via an environment variable or directly in the file.
-
--   **Production Mode (`ENVIRONMENT = "production"`)**:
-    -   Set the `ENVIRONMENT` environment variable to `"production"`.
-    -   Set `ACCOUNT_PHASE` to either `"CHALLENGE"` or `"FUNDED"`.
-=======
 The primary configuration is handled in `fundednext_trading_system/config/settings.py`. The most important setting is `ENVIRONMENT`, which can be set to either `"development"` or `"production"`. This flag controls not only the execution parameters but also which `MetaTrader5` module is loaded.
 
+-   **Production Mode (`ENVIRONMENT = "production"`)**:
+    -   Loads the **real, installed `MetaTrader5` package**, enabling live trading.
+    -   Set `ACCOUNT_PHASE` to either `"CHALLENGE"` or `"FUNDED"`.
+    -   `DRY_RUN` is disabled (`False`).
+    -   `EXECUTION_MODE` is `"LIVE"`.
 -   **Development Mode (`ENVIRONMENT = "development"`)**:
     -   Uses the **mock `MetaTrader5` module** located in the project directory.
     -   `DRY_RUN` is enabled (`True`), meaning no live orders will be placed.
     -   `ML_MODE` is set to `TRAINING` to allow the model to be updated.
--   **Production Mode (`ENVIRONMENT = "production"`)**:
-    -   Loads the **real, installed `MetaTrader5` package**, enabling live trading.
->>>>>>> jules-enable-production-mt5-18427936680362738310
-    -   `DRY_RUN` is disabled (`False`).
-    -   `EXECUTION_MODE` is `"LIVE"`.
--   **Development Mode (`ENVIRONMENT = "development"`)**:
-    -   `DRY_RUN` is enabled (`True`).
     -   `EXECUTION_MODE` is `"PAPER"`.
 
 ## Machine Learning
