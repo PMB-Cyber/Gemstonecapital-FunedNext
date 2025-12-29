@@ -5,7 +5,7 @@ colorama==0.4.6
 idna==3.11
 joblib==1.5.3
 loguru==0.7.3
-metatrader5==5.0.5430
+metatrader5
 numpy==2.2.6
 pandas==2.3.3
 python-dateutil==2.9.0.post0
