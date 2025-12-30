@@ -14,6 +14,7 @@ This is a sophisticated, automated trading system designed to interact with the 
   - [3. Run the Main Orchestrator](#3-run-the-main-orchestrator)
 - [System Architecture](#system-architecture)
 - [Configuration](#configuration)
+- [Environments: Production vs. Development](#environments-production-vs-development)
 - [Troubleshooting](#troubleshooting)
 - [Monitoring](#monitoring)
 - [Change Log](#change-log)
@@ -132,9 +133,22 @@ The system's behavior is controlled by environment variables.
 -   `ENVIRONMENT`: Set to `production` for live trading or `development` for local testing.
 -   `ACCOUNT_PHASE`: Set to `CHALLENGE` or `FUNDED` to load the correct risk management rules.
 
+## Environments: Production vs. Development
+
+The `ENVIRONMENT` variable is the most critical setting in the system. It controls which `MetaTrader5` library is used.
+
+-   **`ENVIRONMENT=production`**:
+    -   Uses the **real `MetaTrader5` library**. This is required for live trading and for getting real-world data.
+    -   This mode is **only available on Windows**.
+    -   If you are on Windows and want to use the system with your actual `MetaTrader5` terminal, you **must** set this variable.
+
+-   **`ENVIRONMENT=development`**:
+    -   Uses a **mock `MetaTrader5` library**. This allows you to run the system on non-Windows machines (like macOS or Linux) for development and testing purposes.
+    -   The mock library does not connect to a real `MetaTrader5` terminal and provides simulated data.
+
 ## Troubleshooting
 
--   **`ModuleNotFoundError`:** This error usually occurs when the project's dependencies are not installed correctly. Make sure you have run the correct `pip install` command for your environment. If you are still seeing the error, try running the command from the root directory of the project.
+-   **`ModuleNotFoundError: No module named 'MetaTrader5'`**: This error will occur if you try to run the system with `ENVIRONMENT=production` on a non-Windows machine, or if the `MetaTrader5` library is not installed correctly.
 -   **`TypeError: ExecutionFlags.__init__() missing...`**: This error occurs when the `ExecutionFlags` class is not initialized with all the required arguments. This was fixed in a recent update. If you are still seeing this error, please pull the latest changes from the repository.
 -   **Monte Carlo Validation Failures**: If the Monte Carlo validation consistently fails for all symbols, it may indicate an issue with the validation logic or the trading strategy itself. The validation logic was recently updated to be more robust. If you are still seeing this issue, please pull the latest changes.
 
@@ -144,6 +158,15 @@ The system's behavior is controlled by environment variables.
 -   **Logs**: Detailed logs are saved to the `logs/` directory, separated by type (`system.log`, `errors.log`, `trades.log`).
 
 ## Change Log
+
+### Fix: `MetaTrader5` Library Selection and Startup Check
+
+-   **`fundednext_trading_system/execution/mt5_data_feed.py`**:
+    -   Made the `MetaTrader5` library selection explicit based on the `ENVIRONMENT` variable.
+-   **`fundednext_trading_system/offline_training/train_model.py`**:
+    -   Added a startup check to ensure the real `MetaTrader5` library is available when `ENVIRONMENT=production`.
+-   **`README.md`**:
+    -   Added a new section to explain the difference between the production and development environments.
 
 ### Fix: Monte Carlo Validation Logic
 

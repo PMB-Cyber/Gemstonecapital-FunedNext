@@ -1,9 +1,18 @@
-from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
+from fundednext_trading_system.config.settings import ENVIRONMENT
 from fundednext_trading_system.monitoring.logger import logger
+
+if ENVIRONMENT == "production":
+    try:
+        import MetaTrader5 as mt5
+    except ImportError:
+        logger.error("Failed to import MetaTrader5. Please ensure it's installed and you're on a Windows system.")
+        mt5 = None
+else:
+    from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
 
 class MT5DataFeed:
     def __init__(self):
-        if not mt5.initialize():
+        if not mt5 or not mt5.initialize():
             logger.error("❌ MT5 initialization failed")
             raise SystemExit("MT5 not initialized")
 
@@ -30,4 +39,5 @@ class MT5DataFeed:
         return [s.name for s in mt5.symbols_get()]
 
     def shutdown(self):
-        mt5.shutdown()
+        if mt5:
+            mt5.shutdown()

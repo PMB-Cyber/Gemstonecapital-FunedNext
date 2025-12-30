@@ -9,7 +9,7 @@ from execution.mt5_data_feed import MT5DataFeed
 from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter
 from trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
-from config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS
+from config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS, ENVIRONMENT
 from monitoring.logger import logger
 from offline_training.offline_training import MonteCarloValidator
 
@@ -130,4 +130,11 @@ def train_and_save_model():
     logger.info("✅ Completed training process for all symbols.")
 
 if __name__ == "__main__":
+    if ENVIRONMENT == "production":
+        try:
+            import MetaTrader5 as mt5
+        except ImportError:
+            logger.error("You are trying to run in production mode, but the 'MetaTrader5' library is not installed.")
+            logger.error("Please install it and ensure you are on a Windows machine.")
+            sys.exit(1)
     train_and_save_model()
