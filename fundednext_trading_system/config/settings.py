@@ -73,3 +73,8 @@ CURRENT_RULES = PHASE_RULES[ACCOUNT_PHASE]
 # =========================================================
 MODELS_DIR = "fundednext_trading_system/models/"
 STATS_PATH = "stats.pkl"
+
+# =========================================================
+# RISK MANAGEMENT
+# =========================================================
+CORRELATION_THRESHOLD = 0.8

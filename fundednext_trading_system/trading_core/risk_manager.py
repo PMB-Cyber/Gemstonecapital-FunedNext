@@ -1,7 +1,8 @@
 from datetime import date
-from monitoring.logger import logger
-from config.settings import CURRENT_RULES
-from trading_core.capital_scaler import CapitalScaler
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.config.settings import CURRENT_RULES, CORRELATION_THRESHOLD
+from fundednext_trading_system.trading_core.capital_scaler import CapitalScaler
+from fundednext_trading_system.trading_core.correlation_manager import CorrelationManager
 
 
 class RiskManager:
@@ -13,6 +14,7 @@ class RiskManager:
     """
 
     def __init__(self):
+        self.correlation_manager = CorrelationManager()
         self.start_balance = CURRENT_RULES["ACCOUNT_BALANCE"]
         self.current_equity = self.start_balance
 
@@ -63,9 +65,35 @@ class RiskManager:
     # =========================
     # PRE-TRADE RISK CHECKS
     # =========================
-    def can_open_trade(self, risk_amount: float) -> bool:
+    def can_open_trade(self, risk_amount: float, symbol: str, open_positions: list) -> bool:
         self._reset_daily_if_new_day()
-        return self._validate_trade_risk(risk_amount)
+
+        if not self._validate_trade_risk(risk_amount):
+            return False
+
+        if not self._validate_correlation(symbol, open_positions):
+            return False
+
+        return True
+
+    def _validate_correlation(self, symbol: str, open_positions: list) -> bool:
+        if not self.correlation_manager.matrix_ready:
+            logger.warning("Correlation matrix not ready, skipping check.")
+            return True
+
+        if not open_positions:
+            return True # No open positions, no correlation to check
+
+        for position in open_positions:
+            correlation = self.correlation_manager.get_correlation(symbol, position.symbol)
+            if abs(correlation) > CORRELATION_THRESHOLD:
+                logger.warning(
+                    f"Trade blocked for {symbol} due to high correlation ({correlation:.2f}) "
+                    f"with open position on {position.symbol}."
+                )
+                return False
+
+        return True
 
     def _validate_trade_risk(self, risk_amount: float) -> bool:
         if risk_amount <= 0:

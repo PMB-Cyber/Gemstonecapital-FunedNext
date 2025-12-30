@@ -186,7 +186,9 @@ def symbol_worker(
     volume = risk_manager.position_size(symbol, stop_loss_pips)
     risk_amount = stop_loss_pips * 10 * volume
 
-    if volume <= 0 or not risk_manager.can_open_trade(risk_amount):
+    open_positions = feed.get_positions()
+
+    if volume <= 0 or not risk_manager.can_open_trade(risk_amount, symbol, open_positions):
         return
 
     allowed, reason = trade_gatekeeper.authorize_trade(symbol, risk_amount)
