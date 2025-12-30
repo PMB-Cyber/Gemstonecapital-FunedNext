@@ -1,22 +1,36 @@
-# Production-ready dependencies
+beautifulsoup4==4.14.3
 certifi==2025.11.12
+cffi==2.0.0
 charset-normalizer==3.4.4
-colorama==0.4.6
+click==8.3.1
+curl_cffi==0.13.0
+dukascopy @ git+https://github.com/algogenetic/dukascopy-1.git@3a5b76a4668a626f911166d708526975b3d3ef96
+frozendict==2.4.7
+greenlet==3.2.4
 idna==3.11
 joblib==1.5.3
 loguru==0.7.3
-metatrader5
-numpy==2.2.6
+-e git+https://github.com/PMB-Cyber/Gemstonecapital-FunedNext@efdca89c0d117f0168ecce80d0d4db9a8ae7745a#egg=MetaTrader5&subdirectory=fundednext_trading_system/MetaTrader5
+multitasking==0.0.12
+nltk==3.9.2
+numpy==2.4.0
 pandas==2.3.3
+peewee==3.18.3
+platformdirs==4.5.1
+playwright==1.55.0
+protobuf==6.33.2
+pycparser==2.23
+pyee==13.0.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
+regex==2025.11.3
 requests==2.32.5
-scikit-learn==1.7.2
-scipy==1.15.3
 six==1.17.0
-ta==0.11.0
-threadpoolctl==3.6.0
+soupsieve==2.8.1
+textblob==0.19.0
+tqdm==4.67.1
+typing_extensions==4.15.0
 tzdata==2025.3
 urllib3==2.6.2
-win32_setctime==1.2.0
--e .
+websockets==15.0.1
+yfinance==1.0

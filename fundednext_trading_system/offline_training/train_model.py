@@ -5,7 +5,7 @@ import sys
 import os
 import numpy as np
 
-from execution.mt5_data_feed import MT5DataFeed
+from execution.dukascopy_data_feed import DukascopyDataFeed
 from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter
 from trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
@@ -57,7 +57,7 @@ def train_and_save_model():
     """
     logger.info("🚀 Starting offline model training process for each symbol...")
 
-    feed = MT5DataFeed()
+    feed = DukascopyDataFeed()
     signal_engine = SignalEngine(confidence_threshold=0.7)
     execution_flags = ExecutionFlags(
         account_phase=AccountPhase.CHALLENGE,
@@ -126,7 +126,6 @@ def train_and_save_model():
         except Exception as e:
             logger.error(f"❌ Failed to save the model for {symbol}: {e}")
 
-    feed.shutdown()
     logger.info("✅ Completed training process for all symbols.")
 
 if __name__ == "__main__":

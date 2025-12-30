@@ -8,10 +8,12 @@ Supports momentum + mean-reversion logic and regime detection.
 import pandas as pd
 import numpy as np
 from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.trading_core.news_sentiment import NewsSentiment
 
 class SignalEngine:
     def __init__(self, confidence_threshold: float = 0.7):
         self.confidence_threshold = confidence_threshold
+        self.news_sentiment = NewsSentiment()
 
     def prepare_features(self, df: pd.DataFrame, regime: str = "range") -> pd.DataFrame:
         """
@@ -48,6 +50,7 @@ class SignalEngine:
         Returns (side, confidence)
         """
         try:
+            sentiment_score = self.news_sentiment.get_sentiment(symbol)
             last_close = df['close'].iloc[-1]
             ma5 = df['close'].rolling(5).mean().iloc[-1]
             ma20 = df['close'].rolling(20).mean().iloc[-1]
@@ -56,16 +59,20 @@ class SignalEngine:
             # Trend regime logic
             if regime == "trend":
                 if ma5 > ma20 > ma50:
-                    return ("buy", 0.8)
+                    confidence = 0.8 + (sentiment_score * 0.2)
+                    return ("buy", confidence)
                 elif ma5 < ma20 < ma50:
-                    return ("sell", 0.8)
+                    confidence = 0.8 - (sentiment_score * 0.2)
+                    return ("sell", confidence)
 
             # Range regime logic (mean-reversion)
             else:
                 if last_close > ma20:
-                    return ("sell", 0.7)
+                    confidence = 0.7 - (sentiment_score * 0.2)
+                    return ("sell", confidence)
                 elif last_close < ma20:
-                    return ("buy", 0.7)
+                    confidence = 0.7 + (sentiment_score * 0.2)
+                    return ("buy", confidence)
 
             return None
 
