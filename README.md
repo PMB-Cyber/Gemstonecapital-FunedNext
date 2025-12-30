@@ -25,7 +25,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 - **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol.
 - **Incremental Training**: Automatically retrains models with new live data to adapt to changing market conditions.
 - **Automated Execution**: Interfaces directly with MT5 to execute and manage trades.
-- **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, and equity-based kill switches.
+- **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, equity-based kill switches, and correlation-based trade blocking.
+- **News Sentiment Analysis**: Integrates news sentiment into the signal generation process to adjust trade confidence.
 - **Real-time Monitoring**: Provides a console-based heartbeat, detailed logging, and Discord integration.
 - **Centralized Configuration**: Supports distinct configurations for development and production through environment variables.
 
@@ -67,6 +68,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 
 Before you can run the main trading system, you need to train the initial machine learning models. This is done by running the `train_model.py` script.
 
+**Important**: The model training process now uses historical data from Dukascopy and requires the `dukascopy-1` command-line tool to be installed and available in your system's PATH.
+
 -   **On Windows (Production):**
     To run the training script on Windows and use the real `MetaTrader5` library, you **must** set the `ENVIRONMENT` environment variable to `production`.
 
@@ -88,7 +91,7 @@ Before you can run the main trading system, you need to train the initial machin
     ```
 
 This script will:
-- Fetch historical data for each trading symbol.
+- Fetch historical data for each trading symbol from Dukascopy.
 - Train a unique model for each symbol.
 - Save the trained models to the `fundednext_trading_system/models/` directory.
 
@@ -126,6 +129,26 @@ The system is designed with a modular architecture, with each component having a
 -   `offline_training/`: Contains the script for training the initial models.
 -   `monitoring/`: Provides tools for monitoring the system's performance.
 
+## Advanced Risk Management
+
+The system includes several layers of risk management to protect capital and adhere to the rules of prop trading firms like FundedNext.
+
+### Correlation Matrix
+
+To avoid over-exposure to a single market factor, the system includes a correlation-based risk check.
+
+-   **How it Works**: On startup, the `CorrelationManager` fetches 30 days of historical data for all allowed symbols and computes a correlation matrix of their returns. This calculation runs in a background thread to avoid delaying the application's startup.
+-   **Trade Blocking**: Before a new trade is opened, the `RiskManager` checks the correlation between the new symbol and all currently open positions. If the absolute correlation with any open position exceeds a defined threshold, the trade is blocked.
+-   **Configuration**: The correlation threshold can be configured in `fundednext_trading_system/config/settings.py` via the `CORRELATION_THRESHOLD` variable. The default is `0.8`.
+
+## News Sentiment Analysis
+
+The system incorporates a news sentiment analysis layer to gauge market mood and adjust its trading strategy accordingly.
+
+-   **Data Source**: News headlines are fetched from Yahoo Finance using the `yfinance` library.
+-   **Sentiment Analysis**: The sentiment of each headline is analyzed using the `TextBlob` library, which provides a polarity score (ranging from -1.0 for negative to 1.0 for positive).
+-   **Integration**: The aggregate sentiment score for a given symbol is fed into the `SignalEngine`. This score is used to adjust the confidence level of the rule-based trading signals. A positive sentiment will increase the confidence of a "buy" signal, while a negative sentiment will increase the confidence of a "sell" signal.
+
 ## Configuration
 
 The system's behavior is controlled by environment variables.
@@ -158,6 +181,27 @@ The `ENVIRONMENT` variable is the most critical setting in the system. It contro
 -   **Logs**: Detailed logs are saved to the `logs/` directory, separated by type (`system.log`, `errors.log`, `trades.log`).
 
 ## Change Log
+
+### Feat: Dukascopy Data, News Sentiment, and Correlation Matrix
+
+-   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
+    -   Added a new data feed to fetch historical data from Dukascopy for model training.
+-   **`fundednext_trading_system/trading_core/news_sentiment.py`**:
+    -   Added a new module to perform news sentiment analysis using `yfinance` and `TextBlob`.
+-   **`fundednext_trading_system/trading_core/correlation_manager.py`**:
+    -   Added a new module to calculate the correlation matrix of asset returns.
+-   **`fundednext_trading_system/trading_core/risk_manager.py`**:
+    -   Integrated the correlation matrix to prevent opening trades in highly correlated assets.
+-   **`fundednext_trading_system/trading_core/signal_engine.py`**:
+    -   Integrated the news sentiment score to adjust the confidence of trading signals.
+-   **`fundednext_trading_system/main.py`**:
+    -   Updated the main orchestrator to pass the necessary data to the `RiskManager`.
+-   **`fundednext_trading_system/config/settings.py`**:
+    -   Added a new `CORRELATION_THRESHOLD` setting.
+-   **`fundednext_trading_system/requirements.txt`**:
+    -   Added new dependencies: `yfinance`, `textblob`, `loguru`, `pandas`, and `dukascopy-1`.
+-   **`README.md`**:
+    -   Updated the documentation to reflect the new features and changes.
 
 ### Fix: `MetaTrader5` Library Selection and Startup Check
 
