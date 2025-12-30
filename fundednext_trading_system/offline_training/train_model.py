@@ -8,7 +8,7 @@ import numpy as np
 from execution.mt5_data_feed import MT5DataFeed
 from trading_core.signal_engine import SignalEngine
 from trading_core.ml_router import MLRouter
-from trading_core.execution_flags import ExecutionFlags, MLMode
+from trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
 from config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS
 from monitoring.logger import logger
 from offline_training.offline_training import MonteCarloValidator
@@ -59,7 +59,11 @@ def train_and_save_model():
 
     feed = MT5DataFeed()
     signal_engine = SignalEngine(confidence_threshold=0.7)
-    execution_flags = ExecutionFlags(ml_mode=MLMode.TRAINING)
+    execution_flags = ExecutionFlags(
+        account_phase=AccountPhase.CHALLENGE,
+        execution_mode=ExecutionMode.SHADOW,
+        ml_mode=MLMode.TRAINING
+    )
     validator = MonteCarloValidator()
 
     # Create models directory if it doesn't exist
