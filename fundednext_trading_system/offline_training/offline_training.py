@@ -8,32 +8,27 @@ class MonteCarloValidator:
         min_win_rate=0.52,
         max_drawdown=0.08,
         simulations=1000,
-        trade_count=200,
     ):
         self.min_win_rate = min_win_rate
         self.max_drawdown = max_drawdown
         self.simulations = simulations
-        self.trade_count = trade_count
 
     def run(self, trade_returns):
         """
         trade_returns: list of % returns per trade (e.g. +0.01, -0.005)
         """
         results = []
+        trade_count = len(trade_returns)
 
         for _ in range(self.simulations):
-            sample = np.random.choice(
-                trade_returns,
-                size=self.trade_count,
-                replace=True,
-            )
+            np.random.shuffle(trade_returns) # Shuffle in place
 
             equity = 1.0
             peak = 1.0
             max_dd = 0.0
             wins = 0
 
-            for r in sample:
+            for r in trade_returns:
                 equity *= (1 + r)
                 peak = max(peak, equity)
                 drawdown = (peak - equity) / peak
@@ -44,7 +39,7 @@ class MonteCarloValidator:
             results.append({
                 "final_equity": equity,
                 "max_dd": max_dd,
-                "win_rate": wins / self.trade_count,
+                "win_rate": wins / trade_count,
             })
 
         return self._evaluate(results)

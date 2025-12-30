@@ -67,7 +67,7 @@ This is a sophisticated, automated trading system designed to interact with the 
 Before you can run the main trading system, you need to train the initial machine learning models. This is done by running the `train_model.py` script.
 
 -   **On Windows (Production):**
-    To run the training script on Windows and use the real `MetaTrader5` library, you need to set the `ENVIRONMENT` environment variable to `production`.
+    To run the training script on Windows and use the real `MetaTrader5` library, you **must** set the `ENVIRONMENT` environment variable to `production`.
 
     In Command Prompt:
     ```cmd
@@ -136,6 +136,7 @@ The system's behavior is controlled by environment variables.
 
 -   **`ModuleNotFoundError`:** This error usually occurs when the project's dependencies are not installed correctly. Make sure you have run the correct `pip install` command for your environment. If you are still seeing the error, try running the command from the root directory of the project.
 -   **`TypeError: ExecutionFlags.__init__() missing...`**: This error occurs when the `ExecutionFlags` class is not initialized with all the required arguments. This was fixed in a recent update. If you are still seeing this error, please pull the latest changes from the repository.
+-   **Monte Carlo Validation Failures**: If the Monte Carlo validation consistently fails for all symbols, it may indicate an issue with the validation logic or the trading strategy itself. The validation logic was recently updated to be more robust. If you are still seeing this issue, please pull the latest changes.
 
 ## Monitoring
 
@@ -143,6 +144,13 @@ The system's behavior is controlled by environment variables.
 -   **Logs**: Detailed logs are saved to the `logs/` directory, separated by type (`system.log`, `errors.log`, `trades.log`).
 
 ## Change Log
+
+### Fix: Monte Carlo Validation Logic
+
+-   **`fundednext_trading_system/offline_training/offline_training.py`**:
+    -   Improved the `MonteCarloValidator` to shuffle trade returns instead of resampling with replacement, providing a more realistic simulation.
+-   **`README.md`**:
+    -   Added a note to the troubleshooting section about Monte Carlo validation failures.
 
 ### Fix: `TypeError` in `train_model.py` and `MetaTrader5` Module Usage
 
