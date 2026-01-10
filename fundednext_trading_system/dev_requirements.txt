@@ -1,7 +1,4 @@
 # Development-specific dependencies
+-r requirements.txt
 -e fundednext_trading_system/MetaTrader5
-pandas
-loguru
-requests
-scikit-learn
--e .
+pytest

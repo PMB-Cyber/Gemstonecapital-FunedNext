@@ -3,7 +3,7 @@
 # =========================================================
 import os
 
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
+ENVIRONMENT = os.getenv("ENVIRONMENT", "production").lower()
 TIMEFRAME_BARS = 300
 LOOP_SLEEP_SECONDS = 60
 PER_SYMBOL_THROTTLE = 0.3
