@@ -1,5 +1,5 @@
 import numpy as np
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 def calculate_atr(df, period=14):
     high_low = df["high"] - df["low"]

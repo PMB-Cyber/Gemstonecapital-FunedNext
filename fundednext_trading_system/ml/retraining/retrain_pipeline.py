@@ -1,7 +1,7 @@
-from ml.retraining.collect_recent_data import collect
-from ml.retraining.retrain_model import retrain
-from ml.retraining.validate_model import validate
-from ml.retraining.monte_carlo import monte_carlo_test
+from fundednext_trading_system.ml.retraining.collect_recent_data import collect
+from fundednext_trading_system.ml.retraining.retrain_model import retrain
+from fundednext_trading_system.ml.retraining.validate_model import validate
+from fundednext_trading_system.ml.retraining.monte_carlo import monte_carlo_test
 
 SYMBOLS = ["EURUSD","GBPUSD","USDJPY","XAUUSD","US30","NDX100"]
 

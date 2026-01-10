@@ -28,23 +28,23 @@ else:
     sys.exit(1)
 from datetime import datetime
 
-from monitoring.equity_kill_switch import (
+from fundednext_trading_system.monitoring.equity_kill_switch import (
     check_equity_limits,
     is_locked,
     get_lock_reason,
 )
-from monitoring.profit_lock import check_profit_lock
-from monitoring.webhook_kill_switch import check_webhook_kill_switch
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.profit_lock import check_profit_lock
+from fundednext_trading_system.monitoring.webhook_kill_switch import check_webhook_kill_switch
+from fundednext_trading_system.monitoring.logger import logger
 
-from execution.mt5_data_feed import MT5DataFeed
-from execution.session_filter import SessionFilter
-from execution.trailing_sl_manager import TrailingSLManager
-from execution.partial_tp_manager import PartialTPManager
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.execution.session_filter import SessionFilter
+from fundednext_trading_system.execution.trailing_sl_manager import TrailingSLManager
+from fundednext_trading_system.execution.partial_tp_manager import PartialTPManager
 
-from trading_core.signal_engine import SignalEngine
-from trading_core.risk_manager import RiskManager
-from trading_core.model_guard import get_active_model_version
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.risk_manager import RiskManager
+from fundednext_trading_system.trading_core.model_guard import get_active_model_version
 
 
 # =========================

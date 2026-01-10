@@ -3,9 +3,9 @@ import sys
 import time
 from datetime import datetime
 
-from monitoring.logger import logger
-from config.allowed_symbols import ALLOWED_SYMBOLS
-from ml.retrain_model import retrain
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.config.allowed_symbols import ALLOWED_SYMBOLS
+from fundednext_trading_system.ml.retrain_model import retrain
 
 LOCK_FILE = "ml/.retrain.lock"
 LOG_FILE = "logs/retrain.log"

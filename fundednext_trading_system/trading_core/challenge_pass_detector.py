@@ -1,10 +1,10 @@
-from monitoring.logger import logger
-from config.fundednext_rules import (
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.config.fundednext_rules import (
     ACCOUNT_BALANCE,
     PROFIT_TARGET,
 )
-from monitoring.equity_kill_switch import is_locked
-from execution.mt5_account import get_equity
+from fundednext_trading_system.monitoring.equity_kill_switch import is_locked
+from fundednext_trading_system.execution.mt5_account import get_equity
 
 
 class ChallengePassDetector:

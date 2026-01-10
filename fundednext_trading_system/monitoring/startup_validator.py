@@ -1,7 +1,7 @@
 import MetaTrader5 as mt5
 from datetime import datetime
-from config.settings import ALLOWED_SYMBOLS
-from monitoring.logger import logger
+from fundednext_trading_system.config.settings import ALLOWED_SYMBOLS
+from fundednext_trading_system.monitoring.logger import logger
 
 # Maximum spread limits per symbol (in points)
 SYMBOL_SPREAD_LIMITS = {

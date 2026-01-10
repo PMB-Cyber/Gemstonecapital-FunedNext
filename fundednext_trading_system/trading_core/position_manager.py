@@ -1,7 +1,7 @@
 import datetime
 from loguru import logger
-from config.symbols_config import SYMBOLS_CONFIG
-from trading_core.session_filter import is_friday_close_window
+from fundednext_trading_system.config.symbols_config import SYMBOLS_CONFIG
+from fundednext_trading_system.trading_core.session_filter import is_friday_close_window
 
 
 class PositionManager:

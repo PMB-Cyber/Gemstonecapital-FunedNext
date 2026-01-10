@@ -5,12 +5,12 @@ import pickle
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from execution.mt5_data_feed import MT5DataFeed
-from trading_core.signal_engine import SignalEngine
-from config.settings import TIMEFRAME_BARS, MODELS_DIR, MODEL_VERSION
-from monitoring.logger import logger
-from offline_training.offline_training import MonteCarloValidator
-from offline_training.train_model import run_backtest
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.config.settings import TIMEFRAME_BARS, MODELS_DIR, MODEL_VERSION
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.offline_training.offline_training import MonteCarloValidator
+from fundednext_trading_system.offline_training.train_model import run_backtest
 
 def retrain_model_for_symbol(symbol: str, new_data_window: int = 500):
     """

@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import date
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 STATE_FILE = "ml/shadow_state.json"
 

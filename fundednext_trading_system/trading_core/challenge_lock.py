@@ -1,6 +1,6 @@
 import json
 import os
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 LOCK_FILE = "state/challenge_lock.json"
 

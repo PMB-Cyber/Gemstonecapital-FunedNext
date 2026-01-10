@@ -7,7 +7,7 @@ import sys
 # Adjust the Python path to include the project root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from config.settings import MODELS_DIR
+from fundednext_trading_system.config.settings import MODELS_DIR
 
 def load_model_for_symbol(symbol: str):
     """

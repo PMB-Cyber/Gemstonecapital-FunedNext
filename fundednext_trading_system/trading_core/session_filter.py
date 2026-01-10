@@ -1,5 +1,5 @@
 from datetime import datetime
-from config.sessions import LONDON_SESSION, NEW_YORK_SESSION, FRIDAY_CLOSE_HOUR
+from fundednext_trading_system.config.sessions import LONDON_SESSION, NEW_YORK_SESSION, FRIDAY_CLOSE_HOUR
 
 def _utc_now():
     return datetime.utcnow()

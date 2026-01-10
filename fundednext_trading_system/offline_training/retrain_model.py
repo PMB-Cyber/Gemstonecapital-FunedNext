@@ -1,4 +1,4 @@
-from offline_training.monte_carlo_validator import MonteCarloValidator
+from fundednext_trading_system.offline_training.monte_carlo_validator import MonteCarloValidator
 import json
 
 def validate_model(trade_returns):

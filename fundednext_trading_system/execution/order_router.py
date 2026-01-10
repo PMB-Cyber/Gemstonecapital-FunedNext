@@ -14,9 +14,9 @@ from typing import Optional, Dict
 from datetime import datetime
 import uuid
 
-from trading_core.execution_flags import ExecutionFlags, ExecutionMode
-from execution.mt5_executor import MT5Executor
-from monitoring.logger import logger
+from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, ExecutionMode
+from fundednext_trading_system.execution.mt5_executor import MT5Executor
+from fundednext_trading_system.monitoring.logger import logger
 
 # NOTE:
 # Actual MT5 bindings should be injected here

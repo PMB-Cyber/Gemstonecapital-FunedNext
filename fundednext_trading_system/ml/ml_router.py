@@ -13,9 +13,9 @@ ABSOLUTE RULES:
 """
 
 from typing import Any, Dict
-from monitoring.logger import logger
-from trading_core.execution_flags import ExecutionFlags, MLMode
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, MLMode
+from fundednext_trading_system.monitoring.logger import logger
 
 
 class MLRouter:

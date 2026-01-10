@@ -1,7 +1,7 @@
 import json
 import os
-from monitoring.logger import logger
-from trading_core.model_guard import promote_model_version
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.trading_core.model_guard import promote_model_version
 
 STATE_FILE = "models/active/model_state.json"
 

@@ -1,5 +1,5 @@
-from ml.shadow_model_loader import ShadowModelLoader
-from monitoring.logger import logger
+from fundednext_trading_system.ml.shadow_model_loader import ShadowModelLoader
+from fundednext_trading_system.monitoring.logger import logger
 
 class ShadowSignalEngine:
     def __init__(self, model_path: str, confidence_threshold=0.7):

@@ -1,8 +1,8 @@
 import MetaTrader5 as mt5
 from flask import Flask, jsonify
-from trading_core.capital_scaler import CapitalScaler
-from config.fundednext_rules import ACCOUNT_BALANCE
-from monitoring.logger import logger
+from fundednext_trading_system.trading_core.capital_scaler import CapitalScaler
+from fundednext_trading_system.config.fundednext_rules import ACCOUNT_BALANCE
+from fundednext_trading_system.monitoring.logger import logger
 
 app = Flask(__name__)
 

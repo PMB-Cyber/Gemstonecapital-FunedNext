@@ -1,6 +1,6 @@
 import MetaTrader5 as mt5
 import pandas as pd
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 
 class PartialTPManager:

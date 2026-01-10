@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config.symbols_config import SYMBOLS_CONFIG
+from fundednext_trading_system.config.symbols_config import SYMBOLS_CONFIG
 from loguru import logger
 
 

@@ -10,7 +10,7 @@ import subprocess
 # To ensure the correct MetaTrader5 package is used, the system path is temporarily
 # modified in a production environment. This prevents the local mock version from
 # being loaded and restores the path immediately after the import.
-from config.settings import ENVIRONMENT
+from fundednext_trading_system.config.settings import ENVIRONMENT
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 should_modify_path = (ENVIRONMENT == "production" and current_dir in sys.path)
@@ -24,30 +24,30 @@ finally:
     if should_modify_path:
         sys.path.insert(0, current_dir)
 
-from execution.symbol_stats_manager import SymbolStatsManager
-from monitoring.logger import logger
-from monitoring.profit_lock import check_profit_lock
-from monitoring.equity_kill_switch import is_locked
-from monitoring.startup_validator import StartupValidator
-from monitoring.heartbeat import print_status as heartbeat_console
-from monitoring.discord_logger import broadcast, send_discord_update
+from fundednext_trading_system.execution.symbol_stats_manager import SymbolStatsManager
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.monitoring.profit_lock import check_profit_lock
+from fundednext_trading_system.monitoring.equity_kill_switch import is_locked
+from fundednext_trading_system.monitoring.startup_validator import StartupValidator
+from fundednext_trading_system.monitoring.heartbeat import print_status as heartbeat_console
+from fundednext_trading_system.monitoring.discord_logger import broadcast, send_discord_update
 
-from trading_core.risk_manager import RiskManager
-from trading_core.execution_flags import ExecutionFlags, AccountPhase, ExecutionMode, MLMode
-from trading_core.trade_gatekeeper import TradeGatekeeper
-from trading_core.ml_router import MLRouter
-from trading_core.session_controller import SessionController
-from trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.risk_manager import RiskManager
+from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, AccountPhase, ExecutionMode, MLMode
+from fundednext_trading_system.trading_core.trade_gatekeeper import TradeGatekeeper
+from fundednext_trading_system.trading_core.ml_router import MLRouter
+from fundednext_trading_system.trading_core.session_controller import SessionController
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
 
-from execution.mt5_data_feed import MT5DataFeed
-from execution.order_router import OrderRouter
-from execution.trailing_sl_manager import TrailingSLManager
-from execution.partial_tp_manager import PartialTPManager
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.execution.order_router import OrderRouter
+from fundednext_trading_system.execution.trailing_sl_manager import TrailingSLManager
+from fundednext_trading_system.execution.partial_tp_manager import PartialTPManager
 
-from ml.retraining.retrain_model import retrain_model_for_symbol
-from ml.model_loader import load_model_for_symbol
+from fundednext_trading_system.ml.retraining.retrain_model import retrain_model_for_symbol
+from fundednext_trading_system.ml.model_loader import load_model_for_symbol
 
-from config.settings import (
+from fundednext_trading_system.config.settings import (
     TIMEFRAME_BARS,
     LOOP_SLEEP_SECONDS,
     PER_SYMBOL_THROTTLE,

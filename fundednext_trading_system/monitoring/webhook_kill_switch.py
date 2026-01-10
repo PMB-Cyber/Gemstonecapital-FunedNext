@@ -13,7 +13,7 @@ To enable later:
 
 import os
 import threading
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 # =========================
 # CONFIG

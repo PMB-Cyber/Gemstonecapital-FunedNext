@@ -8,8 +8,8 @@ if ENVIRONMENT == "development":
 else:
     import MetaTrader5 as mt5
 
-from monitoring.logger import logger
-from monitoring.discord_logger import broadcast
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.monitoring.discord_logger import broadcast
 
 
 # =========================

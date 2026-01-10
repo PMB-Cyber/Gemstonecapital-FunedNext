@@ -1,6 +1,6 @@
 import time
 from datetime import datetime, timedelta
-from config.news_config import (
+from fundednext_trading_system.config.news_config import (
     NEWS_PAUSE_BEFORE,
     NEWS_PAUSE_AFTER,
     HIGH_IMPACT_THRESHOLD

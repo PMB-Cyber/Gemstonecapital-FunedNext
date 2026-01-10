@@ -2,12 +2,12 @@ import time
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from config.allowed_symbols import ALLOWED_SYMBOLS
-from monitoring.logger import logger
-from trading_core.signal_engine import SignalEngine
-from trading_core.risk_manager import RiskManager
-from trading_core.trade_gatekeeper import TradeGatekeeper
-from execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.config.allowed_symbols import ALLOWED_SYMBOLS
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.risk_manager import RiskManager
+from fundednext_trading_system.trading_core.trade_gatekeeper import TradeGatekeeper
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 
 
 class DryRunReporter:

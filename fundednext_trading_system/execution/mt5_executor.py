@@ -1,16 +1,16 @@
 import os
 from datetime import datetime
 
-from monitoring.profit_lock import check_profit_lock
-from monitoring.trade_ledger import TradeRecord
-from monitoring.pnl_tracker import record_trade
-from monitoring.logger import logger
-from monitoring.equity_kill_switch import (
+from fundednext_trading_system.monitoring.profit_lock import check_profit_lock
+from fundednext_trading_system.monitoring.trade_ledger import TradeRecord
+from fundednext_trading_system.monitoring.pnl_tracker import record_trade
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.monitoring.equity_kill_switch import (
     check_equity_limits,
     is_locked,
     get_lock_reason,
 )
-from execution.order_validator import validate_order
+from fundednext_trading_system.execution.order_validator import validate_order
 
 try:
     import MetaTrader5 as mt5

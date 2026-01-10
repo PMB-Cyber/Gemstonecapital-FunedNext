@@ -1,4 +1,4 @@
-from monitoring.metrics import (
+from fundednext_trading_system.monitoring.metrics import (
     signal_count,
     buy_count,
     sell_count,

@@ -12,8 +12,8 @@ Displays live:
 
 import time
 import os
-from monitoring.logger import logger
-from config.settings import ALLOWED_SYMBOLS
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.config.settings import ALLOWED_SYMBOLS
 
 def clear_console():
     """Clear the console for live dashboard effect."""

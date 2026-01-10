@@ -5,13 +5,13 @@ import sys
 import os
 import numpy as np
 
-from execution.dukascopy_data_feed import DukascopyDataFeed
-from trading_core.signal_engine import SignalEngine
-from trading_core.ml_router import MLRouter
-from trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
-from config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS, ENVIRONMENT
-from monitoring.logger import logger
-from offline_training.offline_training import MonteCarloValidator
+from fundednext_trading_system.execution.dukascopy_data_feed import DukascopyDataFeed
+from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.ml_router import MLRouter
+from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
+from fundednext_trading_system.config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS, ENVIRONMENT
+from fundednext_trading_system.monitoring.logger import logger
+from fundednext_trading_system.offline_training.offline_training import MonteCarloValidator
 
 def run_backtest(model, features, df):
     """

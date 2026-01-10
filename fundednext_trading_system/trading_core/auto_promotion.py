@@ -1,6 +1,6 @@
-from trading_core.challenge_pass_detector import ChallengePassDetector
-from trading_core.challenge_lock import lock_challenge, is_challenge_locked
-from monitoring.logger import logger
+from fundednext_trading_system.trading_core.challenge_pass_detector import ChallengePassDetector
+from fundednext_trading_system.trading_core.challenge_lock import lock_challenge, is_challenge_locked
+from fundednext_trading_system.monitoring.logger import logger
 
 
 def run_auto_promotion():

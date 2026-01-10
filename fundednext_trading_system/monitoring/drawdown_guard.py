@@ -1,12 +1,12 @@
 import json
 from datetime import date
 from pathlib import Path
-from config.risk_limits import (
+from fundednext_trading_system.config.risk_limits import (
     MAX_DAILY_LOSS_PCT,
     MAX_TOTAL_DRAWDOWN_PCT,
     ACCOUNT_EQUITY_START,
 )
-from monitoring.logger import logger
+from fundednext_trading_system.monitoring.logger import logger
 
 STATE_FILE = Path("monitoring/.drawdown_state.json")
 

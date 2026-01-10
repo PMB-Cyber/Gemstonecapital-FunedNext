@@ -1,6 +1,6 @@
 import MetaTrader5 as mt5
-from execution.mt5_data_feed import MT5DataFeed
-from ml.feature_engineering import FeatureEngineer
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.ml.feature_engineering import FeatureEngineer
 import pandas as pd
 
 def collect(symbol, bars=3000):

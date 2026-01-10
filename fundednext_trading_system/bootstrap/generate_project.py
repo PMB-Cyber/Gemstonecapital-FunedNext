@@ -43,14 +43,14 @@ NEW_YORK = (13, 22)
 """,
 
     "trading_core/session_filter.py": """from datetime import datetime
-from config.sessions import LONDON, NEW_YORK
+from fundednext_trading_system.config.sessions import LONDON, NEW_YORK
 
 def is_within_session():
     h = datetime.utcnow().hour
     return LONDON[0] <= h <= LONDON[1] or NEW_YORK[0] <= h <= NEW_YORK[1]
 """,
 
-    "trading_core/risk_manager.py": """from config.fundednext_rules import *
+    "trading_core/risk_manager.py": """from fundednext_trading_system.config.fundednext_rules import *
 
 class RiskManager:
     def __init__(self):
@@ -67,10 +67,10 @@ class RiskManager:
         return True
 """,
 
-    "trading_core/signal_engine.py": """from ml.model_loader import ModelLoader
-from ml.feature_engineering import FeatureEngineer
-from config.allowed_symbols import ALLOWED_SYMBOLS
-from trading_core.session_filter import is_within_session
+    "trading_core/signal_engine.py": """from fundednext_trading_system.ml.model_loader import ModelLoader
+from fundednext_trading_system.ml.feature_engineering import FeatureEngineer
+from fundednext_trading_system.config.allowed_symbols import ALLOWED_SYMBOLS
+from fundednext_trading_system.trading_core.session_filter import is_within_session
 
 class SignalEngine:
     def __init__(self):
@@ -93,7 +93,7 @@ class SignalEngine:
 """,
 
     "execution/mt5_executor.py": """import MetaTrader5 as mt5
-from config.allowed_symbols import ALLOWED_SYMBOLS
+from fundednext_trading_system.config.allowed_symbols import ALLOWED_SYMBOLS
 
 class MT5Executor:
     def execute(self, symbol, signal):
@@ -122,8 +122,8 @@ class ModelLoader:
 
     "notebooks/colab_training.ipynb": "{}",
 
-    "main.py": """from trading_core.signal_engine import SignalEngine
-from execution.mt5_executor import MT5Executor
+    "main.py": """from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.execution.mt5_executor import MT5Executor
 
 print("System Ready")
 """,
