@@ -4,23 +4,37 @@ import dukascopy_python as duka
 from fundednext_trading_system.monitoring.logger import logger
 
 class DukascopyDataFeed:
+    DUKASCOPY_SYMBOL_MAP = {
+        "EURUSD": "eurusd",
+        "GBPUSD": "gbpusd",
+        "USDJPY": "usdjpy",
+        "XAUUSD": "xauusd",
+        "US30": "usa30idx",
+        "NDX100": "nas100idx",
+    }
+
     def get_candles(self, symbol, timeframe_in_seconds, count):
         """
         Fetches historical candle data from Dukascopy using the duka library.
         """
-        start_date = datetime(2022, 1, 1)
-        end_date = datetime(2023, 12, 31)
+        dukascopy_symbol = self.DUKASCOPY_SYMBOL_MAP.get(symbol)
+        if not dukascopy_symbol:
+            logger.error(f"Unsupported symbol: {symbol}")
+            return None
+
+        start_date = datetime(2024, 1, 1)
+        end_date = datetime(2026, 12, 31)
 
         try:
-            logger.info(f"Fetching tick data for {symbol} from {start_date} to {end_date}...")
+            logger.info(f"Fetching tick data for {dukascopy_symbol} from {start_date} to {end_date}...")
             df = duka.fetch(
-                symbol,
+                dukascopy_symbol,
                 duka.INTERVAL_TICK,
                 duka.OFFER_SIDE_BID,
                 start_date,
                 end_date,
             )
-            logger.success(f"Successfully fetched {len(df)} ticks for {symbol}.")
+            logger.success(f"Successfully fetched {len(df)} ticks for {dukascopy_symbol}.")
 
             # Resample tick data to OHLC candles
             rule = f'{timeframe_in_seconds}s'
