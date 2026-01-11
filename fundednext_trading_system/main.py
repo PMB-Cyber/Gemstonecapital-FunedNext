@@ -41,13 +41,14 @@ from fundednext_trading_system.trading_core.signal_engine import SignalEngine
 from fundednext_trading_system.trading_core.session_filter import SessionFilter
 from fundednext_trading_system.trading_core.trade_selector import TradeSelector
 from fundednext_trading_system.trading_core.correlation_manager import CorrelationManager
+from fundednext_trading_system.trading_core.pre_trade_validator import PreTradeValidator
 
 from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.execution.order_router import OrderRouter
 from fundednext_trading_system.execution.trailing_sl_manager import TrailingSLManager
 from fundednext_trading_system.execution.partial_tp_manager import PartialTPManager
 
-from fundednext_trading_system.ml.retraining.retrain_model import retrain_model_for_symbol
+from fundednext_trading_system.ml.retraining.retraining_manager import RetrainingManager
 from fundednext_trading_system.ml.model_loader import load_model_for_symbol
 
 from fundednext_trading_system.config.settings import (
@@ -170,10 +171,19 @@ def trade_execution_worker(
     trailing_sl_manager: TrailingSLManager,
     execution_flags: ExecutionFlags,
     stats_manager: SymbolStatsManager,
+    pre_trade_validator: PreTradeValidator,
+    ml_router: MLRouter,
+    signal_engine: SignalEngine,
+    retraining_manager: RetrainingManager,
 ):
     symbol = trade['symbol']
     side = trade['side']
     df = trade['df']
+
+    # Pre-trade validation
+    features = signal_engine.prepare_features(df, regime=stats_manager.stats[symbol]["regime"])
+    if not pre_trade_validator.validate_trade(df, (side, trade['score']), ml_router.model, features):
+        return
 
     # Risk & position sizing
     atr = trailing_sl_manager._calculate_atr(df)
@@ -208,7 +218,8 @@ def trade_execution_worker(
     if order.get("status") in ("filled", "simulated"):
         logger.success(f"ORDER EXECUTED | {symbol} | {side.upper()} | vol={volume}")
         stats_manager.stats[symbol]["trades"] += 1
-        # Retraining logic can be added here if needed
+        if stats_manager.stats[symbol]["trades"] % RETRAIN_AFTER_N_TRADES == 0:
+            retraining_manager.trigger_retraining(symbol)
     else:
         logger.error(f"{symbol}: order failed | {order}")
 
@@ -271,6 +282,8 @@ def start_master_orchestrator():
     session_filter = SessionFilter()
     correlation_manager = CorrelationManager()
     trade_selector = TradeSelector(correlation_manager)
+    pre_trade_validator = PreTradeValidator()
+    retraining_manager = RetrainingManager()
     trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager, session_filter)
     ml_router = MLRouter(execution_flags)
     session_controller = SessionController(execution_flags, risk_manager)
@@ -359,6 +372,10 @@ def start_master_orchestrator():
                     trailing_sl_manager,
                     execution_flags,
                     stats_manager,
+                    pre_trade_validator,
+                    ml_router,
+                    signal_engine,
+                    retraining_manager,
                 )
 
             # Manage open positions

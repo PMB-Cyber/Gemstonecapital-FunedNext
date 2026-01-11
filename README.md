@@ -22,6 +22,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
+- **Robust Incremental Retraining**: Automatically retrains models with new live data to adapt to changing market conditions, managed by a dedicated `RetrainingManager`.
 - **Expanded Symbol List**: Trades a diverse portfolio of 26 instruments, including major currency pairs, major indices, and metals.
 - **Smart Correlation Filtering**: Proactively selects the highest-probability trade from a group of correlated instruments, preventing less promising trades from blocking better opportunities.
 - **Session Filtering**: Smartly manages trades by only allowing them during specific trading sessions (Tokyo, London, New York).
@@ -128,6 +130,9 @@ The system is designed with a modular architecture, with each component having a
 
 ## Advanced Risk Management
 
+### Pre-Trade Monte Carlo Validation
+To add a final layer of validation before a trade is executed, the system runs an on-the-fly Monte Carlo simulation for each trade signal. This is done by the `PreTradeValidator` class, which uses a simplified backtest on a small, recent sample of data to generate a set of hypothetical trade returns. These returns are then passed to the `MonteCarloValidator` to get a "go" or "no-go" decision.
+
 ### Smart Correlation Filtering
 The system uses a sophisticated correlation filter to avoid over-exposure to a single market factor. Instead of naively blocking a trade based on an *existing* open position, the system now:
 1.  **Generates all potential trades** for a given trading cycle.
@@ -169,6 +174,16 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Pre-Trade Monte Carlo Validation and Incremental Retraining
+-   **`fundednext_trading_system/trading_core/pre_trade_validator.py`**:
+    -   Created a new `PreTradeValidator` class to run an on-the-fly Monte Carlo simulation for each trade signal.
+-   **`fundednext_trading_system/ml/retraining/retraining_manager.py`**:
+    -   Created a new `RetrainingManager` class to manage the incremental retraining process.
+-   **`fundednext_trading_system/main.py`**:
+    -   Integrated the `PreTradeValidator` and `RetrainingManager` into the main trading loop.
+-   **`README.md`**:
+    -   Updated documentation to explain the new pre-trade Monte Carlo validation and the improved incremental retraining process.
 
 ### Feat: Smart Correlation Filtering
 -   **`fundednext_trading_system/trading_core/trade_selector.py`**:
