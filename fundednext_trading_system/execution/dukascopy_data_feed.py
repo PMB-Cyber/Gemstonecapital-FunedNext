@@ -28,7 +28,7 @@ class DukascopyDataFeed:
         start_date = end_date - timedelta(days=days_to_fetch)
 
         command = [
-            "dukascopy",
+            "dukascopy-node",
             symbol,
             "-s", start_date.strftime('%Y-%m-%d'),
             "-e", end_date.strftime('%Y-%m-%d'),
@@ -51,5 +51,5 @@ class DukascopyDataFeed:
             return df.tail(count)
 
         except FileNotFoundError:
-            logger.error("The 'dukascopy' command-line tool is not installed or not in the system's PATH.")
+            logger.error("The 'dukascopy-node' command-line tool is not installed or not in the system's PATH.")
             return None
