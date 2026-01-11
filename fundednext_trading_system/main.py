@@ -39,6 +39,8 @@ from fundednext_trading_system.trading_core.ml_router import MLRouter
 from fundednext_trading_system.trading_core.session_controller import SessionController
 from fundednext_trading_system.trading_core.signal_engine import SignalEngine
 from fundednext_trading_system.trading_core.session_filter import SessionFilter
+from fundednext_trading_system.trading_core.trade_selector import TradeSelector
+from fundednext_trading_system.trading_core.correlation_manager import CorrelationManager
 
 from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.execution.order_router import OrderRouter
@@ -114,20 +116,16 @@ def detect_market_regime(df: pd.DataFrame, ma_period: int = 50) -> str:
     return "trend" if abs(slope) > threshold else "range"
 
 # =========================================================
-# SYMBOL WORKER
+# SIGNAL GENERATION WORKER
 # =========================================================
-def symbol_worker(
+def signal_generation_worker(
     symbol: str,
     feed: MT5DataFeed,
     signal_engine: SignalEngine,
     ml_router: MLRouter,
-    risk_manager: RiskManager,
-    trade_gatekeeper: TradeGatekeeper,
-    order_router: OrderRouter,
-    partial_tp_manager: PartialTPManager,
-    trailing_sl_manager: TrailingSLManager,
-    execution_flags: ExecutionFlags,
     stats_manager: SymbolStatsManager,
+    execution_flags: ExecutionFlags,
+    potential_trades: list
 ):
     df = feed.get_candles(symbol, mt5.TIMEFRAME_M1, TIMEFRAME_BARS)
     if df is None or df.empty or len(df) < 60:
@@ -139,57 +137,51 @@ def symbol_worker(
     if not ml_router.model:
         return # Skip if model not found
 
-    # -----------------------------------------------------
-    # Manage open positions
-    # -----------------------------------------------------
-    partial_tp_manager.manage(symbol, df)
-    trailing_sl_manager.manage(symbol, df)
-
-    # -----------------------------------------------------
     # Regime detection
-    # -----------------------------------------------------
     regime = detect_market_regime(df)
     stats_manager.stats[symbol]["regime"] = regime
 
-    # -----------------------------------------------------
     # Feature prep + ML inference
-    # -----------------------------------------------------
     features = signal_engine.prepare_features(df, regime=regime)
-
-    # Align dataframes to ensure features and target are correctly matched
     features, df = features.align(df, join='inner', axis=0)
-
     ml_signal = ml_router.infer(features)
 
     # Confidence gating
     if ml_signal and ml_signal[1] < 0.7:
-        ml_signal = None  # Use rule-based signal if confidence is low
+        ml_signal = None
 
     if execution_flags.ml_mode == MLMode.TRAINING:
         ml_router.update_model(features, df)
 
-    # -----------------------------------------------------
-    # Rule-based fallback ALWAYS allowed
-    # -----------------------------------------------------
+    # Rule-based fallback
     signal = ml_signal or signal_engine.generate_signal(df, symbol, regime=regime)
-    if not signal:
-        return
+    if signal:
+        side, score = signal
+        potential_trades.append({"symbol": symbol, "side": side, "score": score, "df": df})
 
-    side, score = signal
-    logger.info(f"SIGNAL | {symbol} | {side.upper()} | score={score:.2f} | regime={regime}")
+# =========================================================
+# TRADE EXECUTION WORKER
+# =========================================================
+def trade_execution_worker(
+    trade: dict,
+    risk_manager: RiskManager,
+    trade_gatekeeper: TradeGatekeeper,
+    order_router: OrderRouter,
+    trailing_sl_manager: TrailingSLManager,
+    execution_flags: ExecutionFlags,
+    stats_manager: SymbolStatsManager,
+):
+    symbol = trade['symbol']
+    side = trade['side']
+    df = trade['df']
 
-    # -----------------------------------------------------
     # Risk & position sizing
-    # -----------------------------------------------------
     atr = trailing_sl_manager._calculate_atr(df)
     stop_loss_pips = max(1, round(atr * ATR_SL_MULTIPLIER))
-
     volume = risk_manager.position_size(symbol, stop_loss_pips)
     risk_amount = stop_loss_pips * 10 * volume
 
-    open_positions = feed.get_positions()
-
-    if volume <= 0 or not risk_manager.can_open_trade(risk_amount, symbol, open_positions):
+    if volume <= 0:
         return
 
     allowed, reason = trade_gatekeeper.authorize_trade(symbol, risk_amount)
@@ -197,17 +189,13 @@ def symbol_worker(
         logger.warning(f"{symbol}: trade blocked — {reason}")
         return
 
-    # -----------------------------------------------------
     # Dry-run / Replay
-    # -----------------------------------------------------
     if DRY_RUN or REPLAY_MODE:
         logger.info(f"{symbol}: DRY-RUN | {side.upper()} | vol={volume}")
         stats_manager.stats[symbol]["trades"] += 1
         return
 
-    # -----------------------------------------------------
     # Execute order
-    # -----------------------------------------------------
     order = order_router.route_order(
         symbol=symbol,
         order_type=side,
@@ -220,14 +208,7 @@ def symbol_worker(
     if order.get("status") in ("filled", "simulated"):
         logger.success(f"ORDER EXECUTED | {symbol} | {side.upper()} | vol={volume}")
         stats_manager.stats[symbol]["trades"] += 1
-
-        # Check for retraining
-        if stats_manager.stats[symbol]["trades"] % RETRAIN_AFTER_N_TRADES == 0:
-            logger.info(f"Triggering retraining for {symbol} after {stats_manager.stats[symbol]['trades']} trades.")
-
-            # Run retraining in a separate process to avoid blocking
-            script_path = os.path.join(current_dir, "ml", "retraining", "retrain_model.py")
-            subprocess.Popen([sys.executable, script_path, symbol])
+        # Retraining logic can be added here if needed
     else:
         logger.error(f"{symbol}: order failed | {order}")
 
@@ -288,6 +269,8 @@ def start_master_orchestrator():
 
     risk_manager = RiskManager()
     session_filter = SessionFilter()
+    correlation_manager = CorrelationManager()
+    trade_selector = TradeSelector(correlation_manager)
     trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager, session_filter)
     ml_router = MLRouter(execution_flags)
     session_controller = SessionController(execution_flags, risk_manager)
@@ -340,22 +323,20 @@ def start_master_orchestrator():
                 time.sleep(300)
                 continue
 
+            # Phase 1: Signal Generation
+            potential_trades = []
             threads = []
             for symbol in ALLOWED_SYMBOLS:
                 t = threading.Thread(
-                    target=symbol_worker,
+                    target=signal_generation_worker,
                     args=(
                         symbol,
                         feed,
                         signal_engine,
                         ml_router,
-                        risk_manager,
-                        trade_gatekeeper,
-                        order_router,
-                        partial_tp_manager,
-                        trailing_sl_manager,
-                        execution_flags,
                         stats_manager,
+                        execution_flags,
+                        potential_trades,
                     ),
                 )
                 t.start()
@@ -364,6 +345,28 @@ def start_master_orchestrator():
 
             for t in threads:
                 t.join()
+
+            # Phase 2: Trade Selection
+            selected_trades = trade_selector.select_best_trades(potential_trades)
+
+            # Phase 3: Trade Execution
+            for trade in selected_trades:
+                trade_execution_worker(
+                    trade,
+                    risk_manager,
+                    trade_gatekeeper,
+                    order_router,
+                    trailing_sl_manager,
+                    execution_flags,
+                    stats_manager,
+                )
+
+            # Manage open positions
+            for symbol in ALLOWED_SYMBOLS:
+                df = feed.get_candles(symbol, mt5.TIMEFRAME_M1, TIMEFRAME_BARS)
+                if df is not None and not df.empty:
+                    partial_tp_manager.manage(symbol, df)
+                    trailing_sl_manager.manage(symbol, df)
 
             time.sleep(LOOP_SLEEP_SECONDS)
 

@@ -23,6 +23,7 @@ This is a sophisticated, automated trading system designed to interact with the 
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
 - **Expanded Symbol List**: Trades a diverse portfolio of 26 instruments, including major currency pairs, major indices, and metals.
+- **Smart Correlation Filtering**: Proactively selects the highest-probability trade from a group of correlated instruments, preventing less promising trades from blocking better opportunities.
 - **Session Filtering**: Smartly manages trades by only allowing them during specific trading sessions (Tokyo, London, New York).
 - **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol.
 - **Robust Data Handling**: Uses the `dukascopy-python` library to fetch and process historical tick data for model training.
@@ -127,8 +128,12 @@ The system is designed with a modular architecture, with each component having a
 
 ## Advanced Risk Management
 
-### Correlation Matrix
-The system uses a correlation matrix to avoid over-exposure to a single market factor. Before a new trade is opened, the `RiskManager` checks if the new symbol is highly correlated with any open positions and blocks the trade if the correlation exceeds the `CORRELATION_THRESHOLD` (default: `0.8`).
+### Smart Correlation Filtering
+The system uses a sophisticated correlation filter to avoid over-exposure to a single market factor. Instead of naively blocking a trade based on an *existing* open position, the system now:
+1.  **Generates all potential trades** for a given trading cycle.
+2.  **Identifies groups of correlated symbols** among these potential trades.
+3.  **Selects only the single trade with the highest confidence score** from each correlated group.
+This ensures that the system always picks the best trade from any group of correlated instruments, preventing a less promising trade from blocking a more promising one.
 
 ## News Sentiment Analysis
 News headlines are fetched from Yahoo Finance, and their sentiment is analyzed using `TextBlob`. This aggregate sentiment score is used by the `SignalEngine` to adjust the confidence level of trading signals.
@@ -164,6 +169,16 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Smart Correlation Filtering
+-   **`fundednext_trading_system/trading_core/trade_selector.py`**:
+    -   Created a new `TradeSelector` class to select the best trade from each group of correlated symbols.
+-   **`fundednext_trading_system/main.py`**:
+    -   Refactored the main trading loop to work in three phases: signal generation, trade selection, and trade execution.
+-   **`fundednext_trading_system/trading_core/risk_manager.py`**:
+    -   Removed the old correlation check to avoid redundancy.
+-   **`README.md`**:
+    -   Updated documentation to explain the new, smarter correlation filtering logic.
 
 ### Feat: Expanded Symbol List and Session Filtering
 -   **`fundednext_trading_system/config/settings.py`**:
