@@ -22,6 +22,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **High-Impact News Filter**: Avoids trading during high-impact news events by fetching news from the MT5 platform and locking trades for a configurable period.
+- **Resilient Sentiment Analysis**: Includes a fallback mechanism for the sentiment analysis, ensuring that the system can continue to function even if the news API fails.
 - **Optimized for FundedNext 5k Challenge**: Includes a set of optimized parameters specifically for the 5k challenge.
 - **Symbol-Specific Parameters**: Allows for fine-tuning of indicator parameters for each symbol, with a global default.
 - **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
@@ -132,6 +134,9 @@ The system is designed with a modular architecture, with each component having a
 
 ## Advanced Risk Management
 
+### High-Impact News Filter
+The system avoids trading during high-impact news events by fetching news from the MT5 platform and locking trades for a configurable period (e.g., 30 minutes before and after a high-impact event) for the affected symbols.
+
 ### Pre-Trade Monte Carlo Validation
 To add a final layer of validation before a trade is executed, the system runs an on-the-fly Monte Carlo simulation for each trade signal. This is done by the `PreTradeValidator` class, which uses a simplified backtest on a small, recent sample of data to generate a set of hypothetical trade returns. These returns are then passed to the `MonteCarloValidator` to get a "go" or "no-go" decision.
 
@@ -143,7 +148,7 @@ The system uses a sophisticated correlation filter to avoid over-exposure to a s
 This ensures that the system always picks the best trade from any group of correlated instruments, preventing a less promising trade from blocking a more promising one.
 
 ## News Sentiment Analysis
-News headlines are fetched from Yahoo Finance, and their sentiment is analyzed using `TextBlob`. This aggregate sentiment score is used by the `SignalEngine` to adjust the confidence level of trading signals.
+News headlines are fetched from Yahoo Finance, and their sentiment is analyzed using `TextBlob`. This aggregate sentiment score is used by the `SignalEngine` to adjust the confidence level of trading signals. In case of an API failure, the system will log a warning and return a neutral sentiment score, allowing the `SignalEngine` to continue functioning without the sentiment score.
 
 ## Configuration
 
@@ -183,6 +188,18 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: High-Impact News Filter and Resilient Sentiment Analysis
+-   **`fundednext_trading_system/trading_core/high_impact_news_filter.py`**:
+    -   Created a new `HighImpactNewsFilter` class to avoid trading during high-impact news events.
+-   **`fundednext_trading_system/trading_core/trade_gatekeeper.py`**:
+    -   Integrated the `HighImpactNewsFilter` to block trades during high-impact news events.
+-   **`fundednext_trading_system/trading_core/news_sentiment.py`**:
+    -   Refactored the `NewsSentiment` class to be more resilient to API failures.
+-   **`fundednext_trading_system/main.py`**:
+    -   Instantiated the `HighImpactNewsFilter` and passed it to the `TradeGatekeeper`.
+-   **`README.md`**:
+    -   Updated documentation to explain the new high-impact news filter and the fallback mechanism for the sentiment analysis.
 
 ### Feat: Update Dukascopy Symbol Mapping
 -   **`fundednext_trading_system/config/settings.py`**:

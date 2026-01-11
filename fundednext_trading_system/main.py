@@ -42,6 +42,7 @@ from fundednext_trading_system.trading_core.session_filter import SessionFilter
 from fundednext_trading_system.trading_core.trade_selector import TradeSelector
 from fundednext_trading_system.trading_core.correlation_manager import CorrelationManager
 from fundednext_trading_system.trading_core.pre_trade_validator import PreTradeValidator
+from fundednext_trading_system.trading_core.high_impact_news_filter import HighImpactNewsFilter
 
 from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.execution.order_router import OrderRouter
@@ -285,7 +286,8 @@ def start_master_orchestrator():
     trade_selector = TradeSelector(correlation_manager)
     pre_trade_validator = PreTradeValidator()
     retraining_manager = RetrainingManager()
-    trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager, session_filter)
+    high_impact_news_filter = HighImpactNewsFilter()
+    trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager, session_filter, high_impact_news_filter)
     ml_router = MLRouter(execution_flags)
     session_controller = SessionController(execution_flags, risk_manager)
 

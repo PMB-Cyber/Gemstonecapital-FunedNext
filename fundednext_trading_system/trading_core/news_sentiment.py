@@ -28,5 +28,5 @@ class NewsSentiment:
             return sum(sentiment_scores) / len(sentiment_scores)
 
         except Exception as e:
-            logger.error(f"Error fetching or analyzing news for {symbol}: {e}")
+            logger.warning(f"Could not fetch news for {symbol}. Returning neutral sentiment. Error: {e}")
             return 0.0

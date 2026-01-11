@@ -6,6 +6,7 @@ from fundednext_trading_system.trading_core.risk_manager import RiskManager
 
 
 from fundednext_trading_system.trading_core.session_filter import SessionFilter
+from fundednext_trading_system.trading_core.high_impact_news_filter import HighImpactNewsFilter
 
 
 class TradeGatekeeper:
@@ -19,10 +20,12 @@ class TradeGatekeeper:
         execution_flags: ExecutionFlags,
         risk_manager: RiskManager,
         session_filter: SessionFilter,
+        high_impact_news_filter: HighImpactNewsFilter,
     ):
         self.execution_flags = execution_flags
         self.risk_manager = risk_manager
         self.session_filter = session_filter
+        self.high_impact_news_filter = high_impact_news_filter
 
     # =========================
     # PRIMARY ENTRY POINT
@@ -46,6 +49,14 @@ class TradeGatekeeper:
         # -------------------------
         if not self.execution_flags.allow_any_execution():
             reason = "Execution globally disabled"
+            logger.warning(f"{symbol}: {reason}")
+            return False, reason
+
+        # -------------------------
+        # HIGH-IMPACT NEWS FILTER
+        # -------------------------
+        if self.high_impact_news_filter.is_trade_locked(symbol):
+            reason = f"Trade for {symbol} is locked due to a high-impact news event"
             logger.warning(f"{symbol}: {reason}")
             return False, reason
 
