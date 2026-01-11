@@ -22,7 +22,7 @@ class DukascopyDataFeed:
             return None
 
         start_date = datetime(2024, 1, 1)
-        end_date = datetime(2026, 12, 31)
+        end_date = datetime(2025, 12, 31)
 
         try:
             logger.info(f"Fetching tick data for {dukascopy_symbol} from {start_date} to {end_date}...")
