@@ -9,7 +9,8 @@ class DukascopyDataFeed:
         "AUDCAD": "audcad", "AUDCHF": "audchf", "AUDJPY": "audjpy", "AUDNZD": "audnzd", "CADJPY": "cadjpy", "CHFJPY": "chfjpy",
         "EURAUD": "euraud", "EURCAD": "eurcad", "EURCHF": "eurchf", "EURGBP": "eurgbp", "EURJPY": "eurjpy", "GBPAUD": "gbpaud",
         "GBPJPY": "gbpjpy", "NZDUSD": "nzdusd", "USDCAD": "usdcad", "USDCHF": "usdchf", "DEUIDX": "deuidx", "GBRIDX": "gbridx",
-        "USA500IDX": "usa500idx", "XAGUSD": "xagusd"
+        "USA500IDX": "usa500idx", "XAGUSD": "xagusd",
+        "SPX500": "usa500idx", "GER30": "deuidx", "UK100": "gbridx"
     }
 
     def get_candles(self, symbol, timeframe_in_seconds, count):

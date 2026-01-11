@@ -1,7 +1,8 @@
 from datetime import date
 from fundednext_trading_system.monitoring.logger import logger
-from fundednext_trading_system.config.settings import CURRENT_RULES, CORRELATION_THRESHOLD
+from fundednext_trading_system.config.settings import CURRENT_RULES, CORRELATION_THRESHOLD, SYMBOL_PARAMS, get_challenge_optimized_params
 from fundednext_trading_system.trading_core.capital_scaler import CapitalScaler
+from fundednext_trading_system.config.settings import ACCOUNT_PHASE
 
 
 class RiskManager:
@@ -102,12 +103,18 @@ class RiskManager:
     # =========================
     # POSITION SIZING
     # =========================
+    def _get_params(self, symbol: str) -> dict:
+        if ACCOUNT_PHASE == "CHALLENGE":
+            return {**SYMBOL_PARAMS["DEFAULT"], **get_challenge_optimized_params(), **SYMBOL_PARAMS.get(symbol, {})}
+        return {**SYMBOL_PARAMS["DEFAULT"], **SYMBOL_PARAMS.get(symbol, {})}
+
     def position_size(
         self,
         symbol: str,
         stop_loss_pips: float,
         pip_value: float = 10.0
     ) -> float:
+        params = self._get_params(symbol)
 
         if stop_loss_pips <= 0:
             logger.error(f"{symbol}: invalid stop loss pips")

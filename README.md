@@ -22,6 +22,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **Optimized for FundedNext 5k Challenge**: Includes a set of optimized parameters specifically for the 5k challenge.
+- **Symbol Aliases**: Recognizes common symbol aliases (e.g., SPX500, GER30, UK100) and maps them to the correct Dukascopy symbols.
 - **Symbol-Specific Parameters**: Allows for fine-tuning of indicator parameters for each symbol, with a global default.
 - **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
 - **Robust Incremental Retraining**: Automatically retrains models with new live data to adapt to changing market conditions, managed by a dedicated `RetrainingManager`.
@@ -155,6 +157,9 @@ The system's behavior is controlled by a combination of environment variables an
 ### Symbol-Specific Parameters
 The `fundednext_trading_system/config/settings.py` file contains a `SYMBOL_PARAMS` dictionary that allows for fine-tuning of indicator parameters for each symbol. This dictionary has a "DEFAULT" key for global settings and then symbol-specific overrides, providing a flexible way to manage parameters for each instrument.
 
+### FundedNext 5k Challenge Optimization
+The system includes a set of optimized parameters specifically for the 5k challenge. These parameters are automatically applied when the `ACCOUNT_PHASE` environment variable is set to "CHALLENGE".
+
 ## Environments: Production vs. Development
 
 The `ENVIRONMENT` variable is the most critical setting. **The system now defaults to `production`.**
@@ -179,6 +184,16 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Symbol Aliases and FundedNext 5k Challenge Optimization
+-   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
+    -   Added symbol aliases to the `DUKASCOPY_SYMBOL_MAP`.
+-   **`fundednext_trading_system/config/settings.py`**:
+    -   Added a `get_challenge_optimized_params` function to provide optimized parameters for the 5k challenge.
+-   **`fundednext_trading_system/trading_core/risk_manager.py`**:
+    -   Integrated the optimized parameters into the `RiskManager`.
+-   **`README.md`**:
+    -   Updated documentation to explain the new symbol aliases and the optimizations for the FundedNext 5k challenge.
 
 ### Feat: Symbol-Specific Parameters
 -   **`fundednext_trading_system/config/settings.py`**:

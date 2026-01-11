@@ -16,7 +16,7 @@ ALLOWED_SYMBOLS = [
     "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADJPY", "CHFJPY",
     "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "GBPAUD",
     "GBPJPY", "NZDUSD", "USDCAD", "USDCHF", "DEUIDX", "GBRIDX",
-    "USA500IDX", "XAGUSD"
+    "USA500IDX", "XAGUSD", "SPX500", "GER30", "UK100"
 ]
 
 # =========================================================
@@ -78,6 +78,17 @@ PHASE_RULES = {
 
 # Select the current rules based on ACCOUNT_PHASE
 CURRENT_RULES = PHASE_RULES[ACCOUNT_PHASE]
+
+def get_challenge_optimized_params():
+    """
+    Returns a set of optimized parameters for the 5k challenge.
+    """
+    return {
+        "ATR_PERIOD": 10,
+        "ATR_SL_MULTIPLIER": 1.0,
+        "ATR_TP_MULTIPLIERS": (1.5, 2.5),
+        "TP_CLOSE_PERCENTS": (0.4, 0.4),
+    }
 
 # =========================================================
 # FILE PATHS
