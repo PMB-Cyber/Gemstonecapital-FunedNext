@@ -12,12 +12,11 @@ PER_SYMBOL_THROTTLE = 0.3
 # SYMBOLS
 # =========================================================
 ALLOWED_SYMBOLS = [
-    "EURUSD",
-    "GBPUSD",
-    "USDJPY",
-    "XAUUSD",
-    "US30",
-    "NDX100",
+    "EURUSD", "GBPUSD", "USDJPY", "XAUUSD", "US30", "NDX100",
+    "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADJPY", "CHFJPY",
+    "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "GBPAUD",
+    "GBPJPY", "NZDUSD", "USDCAD", "USDCHF", "DEUIDX", "GBRIDX",
+    "USA500IDX", "XAGUSD"
 ]
 
 # =========================================================
@@ -78,3 +77,41 @@ STATS_PATH = "stats.pkl"
 # RISK MANAGEMENT
 # =========================================================
 CORRELATION_THRESHOLD = 0.8
+
+# =========================================================
+# SESSION FILTERING
+# =========================================================
+SESSION_TIMES = {
+    "TOKYO": ("00:00", "09:00"),
+    "LONDON": ("08:00", "17:00"),
+    "NEW_YORK": ("13:00", "22:00"),
+}
+
+SYMBOL_SESSIONS = {
+    "EURUSD": ["LONDON", "NEW_YORK"],
+    "GBPUSD": ["LONDON", "NEW_YORK"],
+    "USDJPY": ["TOKYO", "NEW_YORK"],
+    "XAUUSD": ["LONDON", "NEW_YORK"],
+    "US30": ["NEW_YORK"],
+    "NDX100": ["NEW_YORK"],
+    "AUDCAD": ["TOKYO", "NEW_YORK"],
+    "AUDCHF": ["TOKYO", "LONDON"],
+    "AUDJPY": ["TOKYO"],
+    "AUDNZD": ["TOKYO"],
+    "CADJPY": ["TOKYO", "NEW_YORK"],
+    "CHFJPY": ["TOKYO", "LONDON"],
+    "EURAUD": ["LONDON", "TOKYO"],
+    "EURCAD": ["LONDON", "NEW_YORK"],
+    "EURCHF": ["LONDON"],
+    "EURGBP": ["LONDON"],
+    "EURJPY": ["LONDON", "TOKYO"],
+    "GBPAUD": ["LONDON", "TOKYO"],
+    "GBPJPY": ["LONDON", "TOKYO"],
+    "NZDUSD": ["TOKYO", "NEW_YORK"],
+    "USDCAD": ["NEW_YORK"],
+    "USDCHF": ["LONDON", "NEW_YORK"],
+    "DEUIDX": ["LONDON"],
+    "GBRIDX": ["LONDON"],
+    "USA500IDX": ["NEW_YORK"],
+    "XAGUSD": ["LONDON", "NEW_YORK"],
+}

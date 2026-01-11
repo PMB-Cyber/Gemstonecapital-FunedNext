@@ -38,6 +38,7 @@ from fundednext_trading_system.trading_core.trade_gatekeeper import TradeGatekee
 from fundednext_trading_system.trading_core.ml_router import MLRouter
 from fundednext_trading_system.trading_core.session_controller import SessionController
 from fundednext_trading_system.trading_core.signal_engine import SignalEngine
+from fundednext_trading_system.trading_core.session_filter import SessionFilter
 
 from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.execution.order_router import OrderRouter
@@ -286,7 +287,8 @@ def start_master_orchestrator():
     )
 
     risk_manager = RiskManager()
-    trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager)
+    session_filter = SessionFilter()
+    trade_gatekeeper = TradeGatekeeper(execution_flags, risk_manager, session_filter)
     ml_router = MLRouter(execution_flags)
     session_controller = SessionController(execution_flags, risk_manager)
 

@@ -5,6 +5,9 @@ from fundednext_trading_system.trading_core.execution_flags import ExecutionFlag
 from fundednext_trading_system.trading_core.risk_manager import RiskManager
 
 
+from fundednext_trading_system.trading_core.session_filter import SessionFilter
+
+
 class TradeGatekeeper:
     """
     Combines execution permissions and risk state
@@ -15,9 +18,11 @@ class TradeGatekeeper:
         self,
         execution_flags: ExecutionFlags,
         risk_manager: RiskManager,
+        session_filter: SessionFilter,
     ):
         self.execution_flags = execution_flags
         self.risk_manager = risk_manager
+        self.session_filter = session_filter
 
     # =========================
     # PRIMARY ENTRY POINT
@@ -41,6 +46,14 @@ class TradeGatekeeper:
         # -------------------------
         if not self.execution_flags.allow_any_execution():
             reason = "Execution globally disabled"
+            logger.warning(f"{symbol}: {reason}")
+            return False, reason
+
+        # -------------------------
+        # SESSION FILTER
+        # -------------------------
+        if not self.session_filter.is_in_session(symbol):
+            reason = f"Symbol {symbol} is outside of its allowed trading sessions"
             logger.warning(f"{symbol}: {reason}")
             return False, reason
 

@@ -22,6 +22,8 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **Expanded Symbol List**: Trades a diverse portfolio of 26 instruments, including major currency pairs, major indices, and metals.
+- **Session Filtering**: Smartly manages trades by only allowing them during specific trading sessions (Tokyo, London, New York).
 - **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol.
 - **Robust Data Handling**: Uses the `dukascopy-python` library to fetch and process historical tick data for model training.
 - **Incremental Training**: Automatically retrains models with new live data to adapt to changing market conditions.
@@ -162,6 +164,21 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Expanded Symbol List and Session Filtering
+-   **`fundednext_trading_system/config/settings.py`**:
+    -   Expanded the `ALLOWED_SYMBOLS` list to 26 instruments.
+    -   Added session times and a symbol-to-session mapping for the new `SessionFilter`.
+-   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
+    -   Updated the `DUKASCOPY_SYMBOL_MAP` to include the new symbols.
+-   **`fundednext_trading_system/trading_core/session_filter.py`**:
+    -   Created a new `SessionFilter` class to manage trading sessions.
+-   **`fundednext_trading_system/trading_core/trade_gatekeeper.py`**:
+    -   Integrated the `SessionFilter` to block trades outside of allowed trading sessions.
+-   **`fundednext_trading_system/main.py`**:
+    -   Instantiated the `SessionFilter` and passed it to the `TradeGatekeeper`.
+-   **`README.md`**:
+    -   Updated documentation to reflect the expanded symbol list and the new session filtering feature.
 
 ### Refactor: Dukascopy Data Feed
 -   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:

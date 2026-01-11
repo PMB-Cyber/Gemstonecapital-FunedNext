@@ -1,27 +1,34 @@
 from datetime import datetime
-from fundednext_trading_system.config.sessions import LONDON_SESSION, NEW_YORK_SESSION, FRIDAY_CLOSE_HOUR
+from fundednext_trading_system.config.settings import SESSION_TIMES, SYMBOL_SESSIONS
+from fundednext_trading_system.monitoring.logger import logger
 
-def _utc_now():
-    return datetime.utcnow()
+class SessionFilter:
+    def __init__(self):
+        self.session_times = {
+            session: (
+                datetime.strptime(start, '%H:%M').time(),
+                datetime.strptime(end, '%H:%M').time()
+            )
+            for session, (start, end) in SESSION_TIMES.items()
+        }
 
-def is_weekend() -> bool:
-    return _utc_now().weekday() >= 5
+    def is_in_session(self, symbol):
+        """
+        Checks if a symbol is within its allowed trading session.
+        """
+        now = datetime.utcnow().time()
+        allowed_sessions = SYMBOL_SESSIONS.get(symbol, [])
 
-def is_friday_close_window() -> bool:
-    now = _utc_now()
-    return now.weekday() == 4 and now.hour >= FRIDAY_CLOSE_HOUR
+        if not allowed_sessions:
+            logger.warning(f"No session information for symbol: {symbol}. Allowing trade.")
+            return True
 
-def is_within_trading_session() -> bool:
-    now = _utc_now()
+        for session in allowed_sessions:
+            start_time, end_time = self.session_times.get(session, (None, None))
+            if start_time and end_time:
+                if start_time <= now <= end_time:
+                    logger.info(f"Symbol {symbol} is within the {session} session.")
+                    return True
 
-    if is_weekend():
+        logger.warning(f"Symbol {symbol} is outside of its allowed trading sessions.")
         return False
-
-    if is_friday_close_window():
-        return False
-
-    hour = now.hour
-    in_london = LONDON_SESSION[0] <= hour < LONDON_SESSION[1]
-    in_ny = NEW_YORK_SESSION[0] <= hour < NEW_YORK_SESSION[1]
-
-    return in_london or in_ny
