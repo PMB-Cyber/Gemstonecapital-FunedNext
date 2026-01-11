@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 import dukascopy_python as duka
 from fundednext_trading_system.monitoring.logger import logger
 
@@ -8,8 +8,8 @@ class DukascopyDataFeed:
         """
         Fetches historical candle data from Dukascopy using the duka library.
         """
-        end_date = datetime.utcnow()
-        start_date = end_date - timedelta(days=730)  # Fetch last 2 years of data
+        start_date = datetime(2022, 1, 1)
+        end_date = datetime(2023, 12, 31)
 
         try:
             logger.info(f"Fetching tick data for {symbol} from {start_date} to {end_date}...")
