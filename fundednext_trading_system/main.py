@@ -186,8 +186,9 @@ def trade_execution_worker(
         return
 
     # Risk & position sizing
-    atr = trailing_sl_manager._calculate_atr(df)
-    stop_loss_pips = max(1, round(atr * ATR_SL_MULTIPLIER))
+    params = trailing_sl_manager._get_params(symbol)
+    atr = trailing_sl_manager._calculate_atr(df, params["ATR_PERIOD"])
+    stop_loss_pips = max(1, round(atr * params["ATR_SL_MULTIPLIER"]))
     volume = risk_manager.position_size(symbol, stop_loss_pips)
     risk_amount = stop_loss_pips * 10 * volume
 
@@ -292,17 +293,9 @@ def start_master_orchestrator():
     signal_engine = SignalEngine(confidence_threshold=0.7)
     order_router = OrderRouter(execution_flags)
 
-    partial_tp_manager = PartialTPManager(
-        tp_multipliers=ATR_TP_MULTIPLIERS,
-        close_percents=TP_CLOSE_PERCENTS,
-        atr_period=ATR_PERIOD,
-        atr_multiplier=ATR_SL_MULTIPLIER,
-    )
+    partial_tp_manager = PartialTPManager()
 
-    trailing_sl_manager = TrailingSLManager(
-        atr_period=ATR_PERIOD,
-        atr_multiplier=ATR_SL_MULTIPLIER,
-    )
+    trailing_sl_manager = TrailingSLManager()
 
     stats_manager = SymbolStatsManager()
     for sym in ALLOWED_SYMBOLS:

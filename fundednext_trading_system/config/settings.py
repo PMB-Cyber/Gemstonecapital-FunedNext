@@ -20,12 +20,24 @@ ALLOWED_SYMBOLS = [
 ]
 
 # =========================================================
-# ATR SETTINGS
+# SYMBOL-SPECIFIC PARAMETERS
 # =========================================================
-ATR_PERIOD = 14
-ATR_SL_MULTIPLIER = 1.2
-ATR_TP_MULTIPLIERS = (1.0, 2.0)
-TP_CLOSE_PERCENTS = (0.3, 0.3)
+SYMBOL_PARAMS = {
+    "DEFAULT": {
+        "ATR_PERIOD": 14,
+        "ATR_SL_MULTIPLIER": 1.2,
+        "ATR_TP_MULTIPLIERS": (1.0, 2.0),
+        "TP_CLOSE_PERCENTS": (0.3, 0.3),
+    },
+    "XAUUSD": {
+        "ATR_PERIOD": 20,
+        "ATR_SL_MULTIPLIER": 1.5,
+    },
+    "NDX100": {
+        "ATR_PERIOD": 10,
+        "ATR_SL_MULTIPLIER": 1.0,
+    },
+}
 
 # =========================================================
 # ACCOUNT & EXECUTION MODES

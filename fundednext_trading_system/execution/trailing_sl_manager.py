@@ -3,36 +3,41 @@ import pandas as pd
 from fundednext_trading_system.monitoring.logger import logger
 
 
+from fundednext_trading_system.config.settings import SYMBOL_PARAMS
+
 class TrailingSLManager:
     def __init__(
         self,
         breakeven_r=1.0,
         trail_start_r=1.5,
-        atr_period=14,
-        atr_multiplier=1.2,
     ):
         self.breakeven_r = breakeven_r
         self.trail_start_r = trail_start_r
-        self.atr_period = atr_period
-        self.atr_multiplier = atr_multiplier
         self._active_symbols = set()
 
-    def _calculate_atr(self, df: pd.DataFrame) -> float:
+    def _get_params(self, symbol: str) -> dict:
+        return {**SYMBOL_PARAMS["DEFAULT"], **SYMBOL_PARAMS.get(symbol, {})}
+
+    def _calculate_atr(self, df: pd.DataFrame, atr_period: int) -> float:
         """Calculate ATR from high, low, close data"""
         high_low = df["high"] - df["low"]
         high_close = (df["high"] - df["close"].shift()).abs()
         low_close = (df["low"] - df["close"].shift()).abs()
 
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
-        atr = tr.rolling(self.atr_period).mean().iloc[-1]
+        atr = tr.rolling(atr_period).mean().iloc[-1]
         return atr if pd.notna(atr) else 0
 
     def manage(self, symbol: str, df: pd.DataFrame):
+        params = self._get_params(symbol)
+        atr_period = params["ATR_PERIOD"]
+        atr_multiplier = params["ATR_SL_MULTIPLIER"]
+
         positions = mt5.positions_get(symbol=symbol)
         if not positions:
             return
 
-        atr = self._calculate_atr(df)
+        atr = self._calculate_atr(df, atr_period)
         if atr <= 0:
             return
 

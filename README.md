@@ -22,6 +22,7 @@ This is a sophisticated, automated trading system designed to interact with the 
 ## Key Features
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
+- **Symbol-Specific Parameters**: Allows for fine-tuning of indicator parameters for each symbol, with a global default.
 - **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
 - **Robust Incremental Retraining**: Automatically retrains models with new live data to adapt to changing market conditions, managed by a dedicated `RetrainingManager`.
 - **Expanded Symbol List**: Trades a diverse portfolio of 26 instruments, including major currency pairs, major indices, and metals.
@@ -145,10 +146,14 @@ News headlines are fetched from Yahoo Finance, and their sentiment is analyzed u
 
 ## Configuration
 
-The system's behavior is controlled by environment variables.
+The system's behavior is controlled by a combination of environment variables and a centralized configuration file.
 
+### Environment Variables
 -   `ENVIRONMENT`: Defaults to `production`. Set to `development` for local testing with a mock MT5 library.
 -   `ACCOUNT_PHASE`: Set to `CHALLENGE` or `FUNDED` to load the correct risk management rules.
+
+### Symbol-Specific Parameters
+The `fundednext_trading_system/config/settings.py` file contains a `SYMBOL_PARAMS` dictionary that allows for fine-tuning of indicator parameters for each symbol. This dictionary has a "DEFAULT" key for global settings and then symbol-specific overrides, providing a flexible way to manage parameters for each instrument.
 
 ## Environments: Production vs. Development
 
@@ -174,6 +179,20 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Symbol-Specific Parameters
+-   **`fundednext_trading_system/config/settings.py`**:
+    -   Replaced global indicator parameters with a `SYMBOL_PARAMS` dictionary for symbol-specific configurations.
+-   **`fundednext_trading_system/trading_core/signal_engine.py`**:
+    -   Refactored to use symbol-specific parameters.
+-   **`fundednext_trading_system/execution/trailing_sl_manager.py`**:
+    -   Refactored to use symbol-specific parameters.
+-   **`fundednext_trading_system/execution/partial_tp_manager.py`**:
+    -   Refactored to use symbol-specific parameters.
+-   **`fundednext_trading_system/main.py`**:
+    -   Updated to pass the `symbol` to the relevant components.
+-   **`README.md`**:
+    -   Updated documentation to explain the new symbol-specific parameter configuration.
 
 ### Feat: Pre-Trade Monte Carlo Validation and Incremental Retraining
 -   **`fundednext_trading_system/trading_core/pre_trade_validator.py`**:
