@@ -23,6 +23,7 @@ This is a sophisticated, automated trading system designed to interact with the 
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
 - **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol.
+- **Robust Data Handling**: Uses the `dukascopy-python` library to fetch and process historical tick data for model training.
 - **Incremental Training**: Automatically retrains models with new live data to adapt to changing market conditions.
 - **Automated Execution**: Interfaces directly with MT5 to execute and manage trades.
 - **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, equity-based kill switches, and correlation-based trade blocking.
@@ -68,7 +69,7 @@ The system now defaults to a **production** environment.
 
 ### 1. Initial Model Training
 
-Before running the main system, you need to train the initial machine learning models.
+Before you can run the main trading system, you need to train the initial machine learning models. This is done by running the `train_model.py` script.
 
 -   **On Windows (Production):**
     The system will automatically use the real `MetaTrader5` library.
@@ -81,6 +82,12 @@ Before running the main system, you need to train the initial machine learning m
     ```bash
     ENVIRONMENT=development python -m fundednext_trading_system.offline_training.train_model
     ```
+
+This script will:
+- Fetch historical tick data for each trading symbol from Dukascopy.
+- Resample the tick data into OHLC candles.
+- Train a unique model for each symbol.
+- Save the trained models to the `fundednext_trading_system/models/` directory.
 
 ### 2. Go-Live Validation
 
@@ -155,6 +162,16 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Refactor: Dukascopy Data Feed
+-   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
+    -   Refactored the data feed to use the `dukascopy-python` library instead of the `dukascopy-node` command-line tool.
+-   **`fundednext_trading_system/requirements.txt`**:
+    -   Replaced the `dukascopy-1` git dependency with `dukascopy-python`.
+-   **`fundednext_trading_system/tests/test_dukascopy_feed.py`**:
+    -   Updated the test to mock the `dukascopy-python` library.
+-   **`README.md`**:
+    -   Updated documentation to reflect the new data feed implementation.
 
 ### Refactor: Production Readiness and Cleanup
 -   **`fundednext_trading_system/config/settings.py`**:
