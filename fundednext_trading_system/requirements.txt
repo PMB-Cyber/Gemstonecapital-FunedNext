@@ -22,4 +22,4 @@ win32_setctime==1.2.0
 -e .
 yfinance
 textblob
-git+https://github.com/algogenetic/dukascopy-1.git
+dukascopy-python

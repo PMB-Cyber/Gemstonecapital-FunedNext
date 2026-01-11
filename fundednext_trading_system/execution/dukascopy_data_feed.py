@@ -1,55 +1,48 @@
-import subprocess
 import pandas as pd
 from datetime import datetime, timedelta
+import dukascopy_python as duka
 from fundednext_trading_system.monitoring.logger import logger
 
 class DukascopyDataFeed:
-    TIMEFRAME_MAP = {
-        60: "M1",
-        300: "M5",
-        900: "M15",
-        1800: "M30",
-        3600: "H1",
-        14400: "H4",
-        86400: "D1",
-    }
-
     def get_candles(self, symbol, timeframe_in_seconds, count):
         """
-        Fetches historical candle data from Dukascopy.
+        Fetches historical candle data from Dukascopy using the duka library.
         """
-        timeframe_str = self.TIMEFRAME_MAP.get(timeframe_in_seconds)
-        if not timeframe_str:
-            logger.warning(f"Unsupported timeframe: {timeframe_in_seconds} seconds. Defaulting to M5.")
-            timeframe_str = "M5"
-
         end_date = datetime.utcnow()
-        days_to_fetch = (count * timeframe_in_seconds) / (24 * 3600) + 1
-        start_date = end_date - timedelta(days=days_to_fetch)
-
-        command = [
-            "dukascopy-node",
-            symbol,
-            "-s", start_date.strftime('%Y-%m-%d'),
-            "-e", end_date.strftime('%Y-%m-%d'),
-            "-c", timeframe_str,
-            "--header",
-        ]
+        start_date = end_date - timedelta(days=730)  # Fetch last 2 years of data
 
         try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
+            logger.info(f"Fetching tick data for {symbol} from {start_date} to {end_date}...")
+            df = duka.fetch(
+                symbol,
+                duka.INTERVAL_TICK,
+                duka.OFFER_SIDE_BID,
+                start_date,
+                end_date,
+            )
+            logger.success(f"Successfully fetched {len(df)} ticks for {symbol}.")
 
-            if process.returncode != 0:
-                logger.error(f"Error fetching data from Dukascopy: {stderr.decode()}")
-                return None
+            # Resample tick data to OHLC candles
+            rule = f'{timeframe_in_seconds}s'
 
-            from io import StringIO
-            data = StringIO(stdout.decode())
-            df = pd.read_csv(data)
-            df.rename(columns={'timestamp': 'time', 'volume': 'tick_volume'}, inplace=True)
-            return df.tail(count)
+            # Resample OHLC data
+            ohlc = df['bidPrice'].resample(rule).ohlc()
 
-        except FileNotFoundError:
-            logger.error("The 'dukascopy-node' command-line tool is not installed or not in the system's PATH.")
+            # Resample volume data
+            volume = df['bidVolume'].resample(rule).sum()
+
+            # Combine OHLC and volume data
+            resampled_df = pd.concat([ohlc, volume], axis=1).ffill()
+
+            # Rename columns to match the expected format
+            resampled_df.rename(columns={'bidVolume': 'tick_volume'}, inplace=True)
+
+            # Reset index to make 'time' a column
+            resampled_df.reset_index(inplace=True)
+            resampled_df.rename(columns={'timestamp': 'time'}, inplace=True)
+
+            return resampled_df.tail(count)
+
+        except Exception as e:
+            logger.error(f"Error fetching data from Dukascopy: {e}")
             return None
