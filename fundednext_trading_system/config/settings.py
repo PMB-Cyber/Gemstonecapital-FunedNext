@@ -15,8 +15,8 @@ ALLOWED_SYMBOLS = [
     "EURUSD", "GBPUSD", "USDJPY", "XAUUSD", "US30", "NDX100",
     "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADJPY", "CHFJPY",
     "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "GBPAUD",
-    "GBPJPY", "NZDUSD", "USDCAD", "USDCHF", "DEUIDX", "GBRIDX",
-    "USA500IDX", "XAGUSD", "SPX500", "GER30", "UK100"
+    "GBPJPY", "NZDUSD", "USDCAD", "USDCHF", "GER30", "UK100",
+    "SPX500", "XAGUSD"
 ]
 
 # =========================================================
@@ -34,6 +34,18 @@ SYMBOL_PARAMS = {
         "ATR_SL_MULTIPLIER": 1.5,
     },
     "NDX100": {
+        "ATR_PERIOD": 10,
+        "ATR_SL_MULTIPLIER": 1.0,
+    },
+    "SPX500": {
+        "ATR_PERIOD": 10,
+        "ATR_SL_MULTIPLIER": 1.0,
+    },
+    "GER30": {
+        "ATR_PERIOD": 10,
+        "ATR_SL_MULTIPLIER": 1.0,
+    },
+    "UK100": {
         "ATR_PERIOD": 10,
         "ATR_SL_MULTIPLIER": 1.0,
     },
@@ -133,8 +145,8 @@ SYMBOL_SESSIONS = {
     "NZDUSD": ["TOKYO", "NEW_YORK"],
     "USDCAD": ["NEW_YORK"],
     "USDCHF": ["LONDON", "NEW_YORK"],
-    "DEUIDX": ["LONDON"],
-    "GBRIDX": ["LONDON"],
-    "USA500IDX": ["NEW_YORK"],
+    "GER30": ["LONDON"],
+    "UK100": ["LONDON"],
+    "SPX500": ["NEW_YORK"],
     "XAGUSD": ["LONDON", "NEW_YORK"],
 }

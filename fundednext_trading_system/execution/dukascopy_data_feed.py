@@ -5,12 +5,11 @@ from fundednext_trading_system.monitoring.logger import logger
 
 class DukascopyDataFeed:
     DUKASCOPY_SYMBOL_MAP = {
-        "EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "XAUUSD": "xauusd", "US30": "usa30idx", "NDX100": "nas100idx",
+        "EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "XAUUSD": "xauusd", "US30": "us30", "NDX100": "nas100",
         "AUDCAD": "audcad", "AUDCHF": "audchf", "AUDJPY": "audjpy", "AUDNZD": "audnzd", "CADJPY": "cadjpy", "CHFJPY": "chfjpy",
         "EURAUD": "euraud", "EURCAD": "eurcad", "EURCHF": "eurchf", "EURGBP": "eurgbp", "EURJPY": "eurjpy", "GBPAUD": "gbpaud",
-        "GBPJPY": "gbpjpy", "NZDUSD": "nzdusd", "USDCAD": "usdcad", "USDCHF": "usdchf", "DEUIDX": "deuidx", "GBRIDX": "gbridx",
-        "USA500IDX": "usa500idx", "XAGUSD": "xagusd",
-        "SPX500": "usa500idx", "GER30": "deuidx", "UK100": "gbridx"
+        "GBPJPY": "gbpjpy", "NZDUSD": "nzdusd", "USDCAD": "usdcad", "USDCHF": "usdchf", "GER30": "deu40", "UK100": "uk100",
+        "SPX500": "usa500", "XAGUSD": "xagusd"
     }
 
     def get_candles(self, symbol, timeframe_in_seconds, count):

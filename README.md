@@ -23,7 +23,6 @@ This is a sophisticated, automated trading system designed to interact with the 
 
 - **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
 - **Optimized for FundedNext 5k Challenge**: Includes a set of optimized parameters specifically for the 5k challenge.
-- **Symbol Aliases**: Recognizes common symbol aliases (e.g., SPX500, GER30, UK100) and maps them to the correct Dukascopy symbols.
 - **Symbol-Specific Parameters**: Allows for fine-tuning of indicator parameters for each symbol, with a global default.
 - **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
 - **Robust Incremental Retraining**: Automatically retrains models with new live data to adapt to changing market conditions, managed by a dedicated `RetrainingManager`.
@@ -184,6 +183,14 @@ The `ENVIRONMENT` variable is the most critical setting. **The system now defaul
 -   **Logs**: Detailed logs are saved to the `logs/` directory.
 
 ## Change Log
+
+### Feat: Update Dukascopy Symbol Mapping
+-   **`fundednext_trading_system/config/settings.py`**:
+    -   Updated the `ALLOWED_SYMBOLS`, `SYMBOL_SESSIONS`, and `SYMBOL_PARAMS` dictionaries to use the new, consolidated symbol names.
+-   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
+    -   Updated the `DUKASCOPY_SYMBOL_MAP` with the correct Dukascopy symbol names for all instruments.
+-   **`README.md`**:
+    -   Updated documentation to reflect the changes to the symbol mapping.
 
 ### Feat: Symbol Aliases and FundedNext 5k Challenge Optimization
 -   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
