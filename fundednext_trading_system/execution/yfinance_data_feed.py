@@ -43,12 +43,11 @@ class YFinanceDataFeed:
         while retries < max_retries:
             try:
                 logger.info(f"Fetching {interval} data for {yf_symbol} from {start_date.date()} to {end_date.date()}...")
-                df = yf.download(
-                    tickers=yf_symbol,
+                ticker = yf.Ticker(yf_symbol)
+                df = ticker.history(
                     start=start_date,
                     end=end_date,
                     interval=interval,
-                    progress=False,
                     auto_adjust=True
                 )
 
