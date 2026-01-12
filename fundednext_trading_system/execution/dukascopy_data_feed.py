@@ -13,7 +13,7 @@ class DukascopyDataFeed:
         "SPX500": "usa500", "XAGUSD": "xagusd"
     }
 
-    def get_candles(self, symbol, timeframe_in_seconds, count, max_retries=3, backoff_factor=2):
+    def get_candles(self, symbol, timeframe_in_seconds, count, end_date=None, max_retries=3, backoff_factor=2):
         """
         Fetches historical candle data from Dukascopy using the duka library,
         with a retry mechanism and exponential backoff.
@@ -24,7 +24,8 @@ class DukascopyDataFeed:
             return None
 
         start_date = datetime(2024, 1, 1)
-        end_date = datetime(2025, 12, 31)
+        if end_date is None:
+            end_date = datetime.now()
 
         retries = 0
         while retries < max_retries:

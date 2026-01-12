@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import pandas as pd
 import pickle
 import sys
@@ -74,7 +75,7 @@ def train_and_save_model():
     for symbol in ALLOWED_SYMBOLS:
         logger.info(f"===== Processing symbol: {symbol} =====")
         logger.info(f"Fetching data for {symbol}...")
-        df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000)
+        df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000, end_date=datetime.now())
         if df is None or df.empty or len(df) < 200:
             logger.warning(f"Insufficient data for {symbol}, skipping.")
             continue
