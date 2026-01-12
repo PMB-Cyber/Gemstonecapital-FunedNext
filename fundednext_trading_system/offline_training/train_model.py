@@ -1,12 +1,11 @@
 
-from datetime import datetime
 import pandas as pd
 import pickle
 import sys
 import os
 import numpy as np
 
-from fundednext_trading_system.execution.dukascopy_data_feed import DukascopyDataFeed
+from fundednext_trading_system.execution.yfinance_data_feed import YFinanceDataFeed
 from fundednext_trading_system.trading_core.signal_engine import SignalEngine
 from fundednext_trading_system.trading_core.ml_router import MLRouter
 from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
@@ -58,7 +57,7 @@ def train_and_save_model():
     """
     logger.info("🚀 Starting offline model training process for each symbol...")
 
-    feed = DukascopyDataFeed()
+    feed = YFinanceDataFeed()
     signal_engine = SignalEngine(confidence_threshold=0.7)
     execution_flags = ExecutionFlags(
         account_phase=AccountPhase.CHALLENGE,
@@ -75,7 +74,7 @@ def train_and_save_model():
     for symbol in ALLOWED_SYMBOLS:
         logger.info(f"===== Processing symbol: {symbol} =====")
         logger.info(f"Fetching data for {symbol}...")
-        df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000, end_date=datetime.now())
+        df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000)
         if df is None or df.empty or len(df) < 200:
             logger.warning(f"Insufficient data for {symbol}, skipping.")
             continue

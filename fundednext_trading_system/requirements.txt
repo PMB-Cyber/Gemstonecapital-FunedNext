@@ -22,4 +22,3 @@ win32_setctime==1.2.0
 -e .
 yfinance
 textblob
-dukascopy-python

@@ -17,6 +17,9 @@ class MonteCarloValidator:
         """
         trade_returns: list of % returns per trade (e.g. +0.01, -0.005)
         """
+        # Ensure all returns are floats
+        trade_returns = [float(r) for r in trade_returns]
+
         results = []
         trade_count = len(trade_returns)
 
