@@ -4,7 +4,7 @@
 import os
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production").lower()
-TIMEFRAME_BARS = 300
+TIMEFRAME_BARS = 86400  # 24 hours
 LOOP_SLEEP_SECONDS = 60
 PER_SYMBOL_THROTTLE = 0.3
 

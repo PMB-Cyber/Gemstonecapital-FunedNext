@@ -22,10 +22,12 @@ class YFinanceDataFeed:
 
     def _timeframe_to_interval(self, timeframe_in_seconds):
         """Converts timeframe in seconds to yfinance interval string."""
+        if timeframe_in_seconds == 86400:
+            return "1d"
         minutes = timeframe_in_seconds // 60
         return f"{minutes}m"
 
-    def get_candles(self, symbol, timeframe_in_seconds, count, end_date=None, max_retries=3, backoff_factor=2):
+    def get_candles(self, symbol, timeframe_in_seconds, count, start_date=None, end_date=None, max_retries=3, backoff_factor=2):
         """
         Fetches historical candle data from yfinance with retry mechanism.
         """
@@ -35,9 +37,6 @@ class YFinanceDataFeed:
             return None
 
         interval = self._timeframe_to_interval(timeframe_in_seconds)
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=59)
-
 
         retries = 0
         while retries < max_retries:
@@ -67,7 +66,7 @@ class YFinanceDataFeed:
 
                 # Reset index to make 'time' a column
                 df.reset_index(inplace=True)
-                df.rename(columns={'Datetime': 'time', 'index': 'time'}, inplace=True)
+                df.rename(columns={'Date': 'time', 'index': 'time'}, inplace=True)
 
                 # Ensure 'time' column is timezone-aware (yfinance can be inconsistent)
                 if df['time'].dt.tz is None:
