@@ -27,7 +27,7 @@ class YFinanceDataFeed:
         minutes = timeframe_in_seconds // 60
         return f"{minutes}m"
 
-    def get_candles(self, symbol, timeframe_in_seconds, count, start_date=None, end_date=None, max_retries=3, backoff_factor=2):
+    def get_candles(self, symbol, timeframe_in_seconds, count=None, start_date=None, end_date=None, max_retries=3, backoff_factor=2):
         """
         Fetches historical candle data from yfinance with retry mechanism.
         """
@@ -72,7 +72,13 @@ class YFinanceDataFeed:
                 if df['time'].dt.tz is None:
                     df['time'] = df['time'].dt.tz_localize('UTC')
 
-                return df.tail(count)
+                # Clean data: forward-fill missing values, then drop any remaining NaNs
+                df.ffill(inplace=True)
+                df.dropna(inplace=True)
+
+                if count:
+                    return df.tail(count)
+                return df
 
             except Exception as e:
                 retries += 1

@@ -72,13 +72,13 @@ def train_and_save_model():
         os.makedirs(MODELS_DIR)
         logger.info(f"Created directory: {MODELS_DIR}")
 
-    start_date = datetime(2024, 1, 1)
+    start_date = datetime(2020, 1, 1)
     end_date = datetime(2026, 1, 9)
 
     for symbol in ALLOWED_SYMBOLS:
         logger.info(f"===== Processing symbol: {symbol} =====")
         logger.info(f"Fetching data for {symbol}...")
-        df = feed.get_candles(symbol, TIMEFRAME_BARS, count=5000, start_date=start_date, end_date=end_date)
+        df = feed.get_candles(symbol, TIMEFRAME_BARS, start_date=start_date, end_date=end_date)
         if df is None or df.empty or len(df) < 200:
             logger.warning(f"Insufficient data for {symbol}, skipping.")
             continue
