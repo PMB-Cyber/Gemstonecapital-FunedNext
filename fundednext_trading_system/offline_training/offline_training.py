@@ -1,5 +1,6 @@
 import numpy as np
 import json
+import pandas as pd
 from fundednext_trading_system.monitoring.logger import logger
 
 class MonteCarloValidator:
@@ -18,7 +19,7 @@ class MonteCarloValidator:
         trade_returns: list of % returns per trade (e.g. +0.01, -0.005)
         """
         # Ensure all returns are floats
-        trade_returns = [float(r) for r in trade_returns]
+        trade_returns = [float(r.iloc[0]) if isinstance(r, pd.Series) else float(r) for r in trade_returns]
 
         results = []
         trade_count = len(trade_returns)
