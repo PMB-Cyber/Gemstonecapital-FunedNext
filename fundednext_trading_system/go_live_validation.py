@@ -17,6 +17,7 @@ import os
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from fundednext_trading_system.monitoring.logger import logger
 from fundednext_trading_system.config.settings import ENVIRONMENT, ALLOWED_SYMBOLS
 if ENVIRONMENT != "production":
     from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
@@ -39,6 +40,10 @@ from fundednext_trading_system.monitoring.logger import logger
 
 from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.execution.session_filter import SessionFilter
+if ENVIRONMENT != "production":
+    from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
+else:
+    import MetaTrader5 as mt5
 from fundednext_trading_system.execution.trailing_sl_manager import TrailingSLManager
 from fundednext_trading_system.execution.partial_tp_manager import PartialTPManager
 

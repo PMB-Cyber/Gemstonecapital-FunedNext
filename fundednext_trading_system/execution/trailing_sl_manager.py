@@ -1,4 +1,8 @@
-import MetaTrader5 as mt5
+from fundednext_trading_system.config.settings import ENVIRONMENT
+if ENVIRONMENT != "production":
+    from fundednext_trading_system.MetaTrader5 import MetaTrader5 as mt5
+else:
+    import MetaTrader5 as mt5
 import pandas as pd
 from fundednext_trading_system.monitoring.logger import logger
 
