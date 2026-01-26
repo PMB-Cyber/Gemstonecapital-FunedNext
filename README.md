@@ -1,305 +1,121 @@
 # FundedNext Trading System
 
-This is a sophisticated, automated trading system designed to interact with the MetaTrader 5 (MT5) platform. It leverages a combination of machine learning and rule-based strategies to execute trades, manage risk, and monitor performance in real-time.
+This is a sophisticated, automated trading system designed for the FundedNext 5k challenge and beyond. It features a **Hybrid Strategy** combining four specialized trading logics with a dual-layer Machine Learning gatekeeper.
 
 ## Table of Contents
 
 - [Key Features](#key-features)
+- [Hybrid Trading Strategy](#hybrid-trading-strategy)
+- [Dual-Layer ML Logic](#dual-layer-ml-logic)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [How to Run the System](#how-to-run-the-system)
-  - [1. Initial Model Training](#1-initial-model-training)
-  - [2. Go-Live Validation](#2-go-live-validation)
-  - [3. Run the Main Orchestrator](#3-run-the-main-orchestrator)
+- [Operational Instructions](#operational-instructions)
+  - [1. MT5 Pepperstone Setup](#1-mt5-pepperstone-setup)
+  - [2. Automated Parameter Optimization](#2-automated-parameter-optimization)
+  - [3. Initial Model Training](#3-initial-model-training)
+  - [4. Go-Live Validation](#4-go-live-validation)
+  - [5. Run the Main Orchestrator](#5-run-the-main-orchestrator)
 - [System Architecture](#system-architecture)
 - [Configuration](#configuration)
-- [Environments: Production vs. Development](#environments-production-vs-development)
 - [Troubleshooting](#troubleshooting)
-- [Monitoring](#monitoring)
 - [Change Log](#change-log)
 
 ## Key Features
 
-- **Hybrid Trading Logic**: Combines an ML model for signal generation with a rule-based fallback system.
-- **High-Impact News Filter**: Avoids trading during high-impact news events by fetching news from the MT5 platform and locking trades for a configurable period.
-- **Resilient Sentiment Analysis**: Includes a fallback mechanism for the sentiment analysis, ensuring that the system can continue to function even if the news API fails.
-- **Optimized for FundedNext 5k Challenge**: Includes a set of optimized parameters specifically for the 5k challenge.
-- **Symbol-Specific Parameters**: Allows for fine-tuning of indicator parameters for each symbol, with a global default.
-- **Pre-Trade Monte Carlo Validation**: Adds a final layer of validation by running an on-the-fly Monte Carlo simulation for each trade signal.
-- **Robust Incremental Retraining**: Automatically retrains models with new live data to adapt to changing market conditions, managed by a dedicated `RetrainingManager`.
-- **Expanded Symbol List**: Trades a diverse portfolio of 26 instruments, including major currency pairs, major indices, and metals.
-- **Smart Correlation Filtering**: Proactively selects the highest-probability trade from a group of correlated instruments, preventing less promising trades from blocking better opportunities.
-- **Session Filtering**: Smartly manages trades by only allowing them during specific trading sessions (Tokyo, London, New York).
-- **Symbol-Specific Models**: Trains and deploys a unique ML model for each trading symbol.
-- **Robust Data Handling**: Uses the `dukascopy-python` library to fetch and process historical tick data for model training.
-- **Incremental Training**: Automatically retrains models with new live data to adapt to changing market conditions.
-- **Automated Execution**: Interfaces directly with MT5 to execute and manage trades.
-- **Advanced Risk Management**: Features include dynamic position sizing, trailing stop-losses, equity-based kill switches, and correlation-based trade blocking.
-- **News Sentiment Analysis**: Integrates news sentiment into the signal generation process to adjust trade confidence.
-- **Real-time Monitoring**: Provides a console-based heartbeat, detailed logging, and Discord integration.
-- **Centralized Configuration**: Defaults to a production-ready setup, with support for a development mode via environment variables.
+- **Hybrid Scalping Strategy**: Combines Momentum, Mean Reversion, Pullback, and Breakout logics.
+- **50 Symbols Support**: Pre-configured for a diverse portfolio of 50 instruments (Forex, Indices, Commodities, Crypto).
+- **Automated Optimization**: Built-in grid search to find the best indicator parameters per individual symbol.
+- **Dual-Layer ML Gatekeeper**: Rules generate baseline signals; ML confirms or rejects them based on probability.
+- **High-Precision Data**: Uses real MT5 Tick Data for training and optimization in production.
+- **Regime Detection**: Automatically switches logic based on Trend, Range, or High Volatility regimes.
+- **Advanced Risk Management**: Dynamic position sizing, trailing stop-losses, and correlation-based filtering.
+
+## Hybrid Trading Strategy
+
+The system monitors 50 symbols on the **M5 (5-minute)** timeframe using four primary strategies:
+
+1.  **Momentum**: Captures strong trends using ADX thresholds and EMA crossovers.
+2.  **Mean Reversion**: Identifies overextended moves using Bollinger Bands and RSI oversold/overbought levels.
+3.  **Pullback**: Enters on retracements to key EMAs within a confirmed trend.
+4.  **Breakout**: Capitalizes on volatility expansions and price breaks above/below recent High/Low ranges.
+
+## Dual-Layer ML Logic
+
+The system operates with a probabilistic confirmation layer:
+
+-   **Layer 1 (Rules)**: The rule-based engine scans the market for the 4 hybrid setups.
+-   **Layer 2 (ML Gatekeeper)**: If a rule-based setup is found, the ML model (Gradient Boosting) provides a probability. The trade only proceeds if ML confirms the direction with > 70% confidence.
+-   **Failover**:
+    -   If the ML pipeline fails (e.g., model missing), the system falls back to pure high-confidence rule signals (> 80%).
+    -   If rules fail to trigger but ML sees an extremely high-probability setup (> 90%), it can generate a backup signal.
 
 ## Getting Started
 
 ### Prerequisites
 
--   Python 3.8+
--   MetaTrader 5 terminal installed and running (for production)
--   Git
+-   Windows OS (for production MT5 interaction).
+-   Python 3.8+.
+-   MetaTrader 5 terminal with a **Pepperstone** account (Demo or Live).
 
 ### Installation
 
-1.  **Clone the repository:**
+1.  **Install Production Dependencies:**
     ```bash
-    git clone <repository-url>
-    cd <repository-name>
+    pip install -r fundednext_trading_system/requirements.txt
     ```
 
-2.  **Install Dependencies:**
+## Operational Instructions
 
-    The project uses two different files for dependencies, depending on your environment.
+### 1. MT5 Pepperstone Setup
+1.  Open your Pepperstone MT5 terminal.
+2.  Ensure "Algo Trading" is enabled (Green button).
+3.  Go to `Tools -> Options -> Expert Advisors` and check "Allow Algorithmic Trading".
+4.  Ensure all 50 symbols are visible in the Market Watch.
 
-    -   **For Production (Windows):**
-        ```bash
-        pip install -r fundednext_trading_system/requirements.txt
-        ```
-        This command installs all the necessary packages for running the system in a live trading environment.
+### 2. Automated Parameter Optimization
+Before training models, find the best settings for each symbol:
+```bash
+# This is integrated into the training script, but can be run independently if needed.
+python -m fundednext_trading_system.offline_training.train_model
+```
+The system will run a grid search for each symbol to find optimal EMA and RSI settings and update `config/symbols_config.py`.
 
-    -   **For Development (macOS/Linux):**
-        ```bash
-        pip install -r fundednext_trading_system/dev_requirements.txt
-        ```
-        This command installs all production dependencies, plus a mock `MetaTrader5` library and `pytest` for development.
+### 3. Initial Model Training
+The training script fetches real tick data from Pepperstone MT5:
+```bash
+python -m fundednext_trading_system.offline_training.train_model
+```
+-   Fetches raw ticks.
+-   Aggregates to M5 candles.
+-   Optimizes indicators.
+-   Trains ML models.
+-   Validates via Monte Carlo simulation.
 
-## How to Run the System
-
-The system now defaults to a **production** environment.
-
-### 1. Initial Model Training
-
-Before you can run the main trading system, you need to train the initial machine learning models. This is done by running the `train_model.py` script.
-
--   **On Windows (Production):**
-    The system will automatically use the real `MetaTrader5` library.
-    ```cmd
-    python -m fundednext_trading_system.offline_training.train_model
-    ```
-
--   **On macOS/Linux (Development):**
-    You **must** explicitly set the `ENVIRONMENT` to `development`.
-    ```bash
-    ENVIRONMENT=development python -m fundednext_trading_system.offline_training.train_model
-    ```
-
-This script will:
-- Fetch historical tick data for each trading symbol from Dukascopy.
-- Resample the tick data into OHLC candles.
-- Train a unique model for each symbol.
-- Save the trained models to the `fundednext_trading_system/models/` directory.
-
-### 2. Go-Live Validation
-
-Before running in a live environment, it's crucial to run the pre-flight validation script and consult the `go_live_checklist.md` to ensure all configurations are correct.
+### 4. Go-Live Validation
+Run the pre-flight check:
 ```bash
 python -m fundednext_trading_system.go_live_validation
 ```
 
-### 3. Run the Main Orchestrator
-
-Once models are trained, run the main trading system.
-
--   **Production Example:**
-    You can optionally specify the account phase.
-    ```bash
-    ACCOUNT_PHASE=CHALLENGE python -m fundednext_trading_system.main
-    ```
-
--   **Development Example:**
-    ```bash
-    ENVIRONMENT=development python -m fundednext_trading_system.main
-    ```
-
-## System Architecture
-
-The system is designed with a modular architecture, with each component having a specific responsibility.
-
--   `main.py`: The main entry point of the application.
--   `config/settings.py`: Contains all the configuration settings for the system.
--   `trading_core/`: The core logic of the trading system.
--   `execution/`: Handles the communication with the MT5 platform.
--   `ml/`: Contains the machine learning models and related scripts.
--   `offline_training/`: Contains the script for training the initial models.
--   `monitoring/`: Provides tools for monitoring the system's performance.
-
-## Advanced Risk Management
-
-### High-Impact News Filter
-The system avoids trading during high-impact news events by fetching news from the MT5 platform and locking trades for a configurable period (e.g., 30 minutes before and after a high-impact event) for the affected symbols.
-
-### Pre-Trade Monte Carlo Validation
-To add a final layer of validation before a trade is executed, the system runs an on-the-fly Monte Carlo simulation for each trade signal. This is done by the `PreTradeValidator` class, which uses a simplified backtest on a small, recent sample of data to generate a set of hypothetical trade returns. These returns are then passed to the `MonteCarloValidator` to get a "go" or "no-go" decision.
-
-### Smart Correlation Filtering
-The system uses a sophisticated correlation filter to avoid over-exposure to a single market factor. Instead of naively blocking a trade based on an *existing* open position, the system now:
-1.  **Generates all potential trades** for a given trading cycle.
-2.  **Identifies groups of correlated symbols** among these potential trades.
-3.  **Selects only the single trade with the highest confidence score** from each correlated group.
-This ensures that the system always picks the best trade from any group of correlated instruments, preventing a less promising trade from blocking a more promising one.
-
-## News Sentiment Analysis
-News headlines are fetched from Yahoo Finance, and their sentiment is analyzed using `TextBlob`. This aggregate sentiment score is used by the `SignalEngine` to adjust the confidence level of trading signals. In case of an API failure, the system will log a warning and return a neutral sentiment score, allowing the `SignalEngine` to continue functioning without the sentiment score.
+### 5. Run the Main Orchestrator
+Start the live trading loop:
+```bash
+ACCOUNT_PHASE=CHALLENGE python -m fundednext_trading_system.main
+```
 
 ## Configuration
 
-The system's behavior is controlled by a combination of environment variables and a centralized configuration file.
-
-### Environment Variables
--   `ENVIRONMENT`: Defaults to `production`. Set to `development` for local testing with a mock MT5 library.
--   `ACCOUNT_PHASE`: Set to `CHALLENGE` or `FUNDED` to load the correct risk management rules.
-
-### Symbol-Specific Parameters
-The `fundednext_trading_system/config/settings.py` file contains a `SYMBOL_PARAMS` dictionary that allows for fine-tuning of indicator parameters for each symbol. This dictionary has a "DEFAULT" key for global settings and then symbol-specific overrides, providing a flexible way to manage parameters for each instrument.
-
-### FundedNext 5k Challenge Optimization
-The system includes a set of optimized parameters specifically for the 5k challenge. These parameters are automatically applied when the `ACCOUNT_PHASE` environment variable is set to "CHALLENGE".
-
-## Environments: Production vs. Development
-
-The `ENVIRONMENT` variable is the most critical setting. **The system now defaults to `production`.**
-
--   **`production` (Default)**:
-    -   Uses the **real `MetaTrader5` library**.
-    -   This mode is **only available on Windows**.
-    -   The system will automatically run in this mode unless `ENVIRONMENT` is explicitly set to `development`.
-
--   **`development`**:
-    -   Uses a **mock `MetaTrader5` library` for development on non-Windows machines.
-    -   To use this mode, you **must** set the environment variable: `ENVIRONMENT=development`.
-
-## Troubleshooting
-
--   **`ModuleNotFoundError: No module named 'MetaTrader5'`**: This error will occur if you try to run the system in its default production mode on a non-Windows machine, or if the `MetaTrader5` library is not installed correctly.
--   **Monte Carlo Validation Failures**: If the Monte Carlo validation consistently fails, it may indicate an issue with the trading strategy itself. The validation logic was recently updated to be more robust.
-
-## Monitoring
-
--   **Console**: The terminal displays a live heartbeat with key performance indicators.
--   **Logs**: Detailed logs are saved to the `logs/` directory.
+-   `config/settings.py`: Global settings, symbols, and session times.
+-   `config/symbols_config.py`: Symbol-specific optimized indicator parameters.
+-   `ENVIRONMENT`: Defaults to `production`.
 
 ## Change Log
 
-### Feat: High-Impact News Filter and Resilient Sentiment Analysis
--   **`fundednext_trading_system/trading_core/high_impact_news_filter.py`**:
-    -   Created a new `HighImpactNewsFilter` class to avoid trading during high-impact news events.
--   **`fundednext_trading_system/trading_core/trade_gatekeeper.py`**:
-    -   Integrated the `HighImpactNewsFilter` to block trades during high-impact news events.
--   **`fundednext_trading_system/trading_core/news_sentiment.py`**:
-    -   Refactored the `NewsSentiment` class to be more resilient to API failures.
--   **`fundednext_trading_system/main.py`**:
-    -   Instantiated the `HighImpactNewsFilter` and passed it to the `TradeGatekeeper`.
--   **`README.md`**:
-    -   Updated documentation to explain the new high-impact news filter and the fallback mechanism for the sentiment analysis.
-
-### Feat: Update Dukascopy Symbol Mapping
--   **`fundednext_trading_system/config/settings.py`**:
-    -   Updated the `ALLOWED_SYMBOLS`, `SYMBOL_SESSIONS`, and `SYMBOL_PARAMS` dictionaries to use the new, consolidated symbol names.
--   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
-    -   Updated the `DUKASCOPY_SYMBOL_MAP` with the correct Dukascopy symbol names for all instruments.
--   **`README.md`**:
-    -   Updated documentation to reflect the changes to the symbol mapping.
-
-### Feat: Symbol Aliases and FundedNext 5k Challenge Optimization
--   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
-    -   Added symbol aliases to the `DUKASCOPY_SYMBOL_MAP`.
--   **`fundednext_trading_system/config/settings.py`**:
-    -   Added a `get_challenge_optimized_params` function to provide optimized parameters for the 5k challenge.
--   **`fundednext_trading_system/trading_core/risk_manager.py`**:
-    -   Integrated the optimized parameters into the `RiskManager`.
--   **`README.md`**:
-    -   Updated documentation to explain the new symbol aliases and the optimizations for the FundedNext 5k challenge.
-
-### Feat: Symbol-Specific Parameters
--   **`fundednext_trading_system/config/settings.py`**:
-    -   Replaced global indicator parameters with a `SYMBOL_PARAMS` dictionary for symbol-specific configurations.
--   **`fundednext_trading_system/trading_core/signal_engine.py`**:
-    -   Refactored to use symbol-specific parameters.
--   **`fundednext_trading_system/execution/trailing_sl_manager.py`**:
-    -   Refactored to use symbol-specific parameters.
--   **`fundednext_trading_system/execution/partial_tp_manager.py`**:
-    -   Refactored to use symbol-specific parameters.
--   **`fundednext_trading_system/main.py`**:
-    -   Updated to pass the `symbol` to the relevant components.
--   **`README.md`**:
-    -   Updated documentation to explain the new symbol-specific parameter configuration.
-
-### Feat: Pre-Trade Monte Carlo Validation and Incremental Retraining
--   **`fundednext_trading_system/trading_core/pre_trade_validator.py`**:
-    -   Created a new `PreTradeValidator` class to run an on-the-fly Monte Carlo simulation for each trade signal.
--   **`fundednext_trading_system/ml/retraining/retraining_manager.py`**:
-    -   Created a new `RetrainingManager` class to manage the incremental retraining process.
--   **`fundednext_trading_system/main.py`**:
-    -   Integrated the `PreTradeValidator` and `RetrainingManager` into the main trading loop.
--   **`README.md`**:
-    -   Updated documentation to explain the new pre-trade Monte Carlo validation and the improved incremental retraining process.
-
-### Feat: Smart Correlation Filtering
--   **`fundednext_trading_system/trading_core/trade_selector.py`**:
-    -   Created a new `TradeSelector` class to select the best trade from each group of correlated symbols.
--   **`fundednext_trading_system/main.py`**:
-    -   Refactored the main trading loop to work in three phases: signal generation, trade selection, and trade execution.
--   **`fundednext_trading_system/trading_core/risk_manager.py`**:
-    -   Removed the old correlation check to avoid redundancy.
--   **`README.md`**:
-    -   Updated documentation to explain the new, smarter correlation filtering logic.
-
-### Feat: Expanded Symbol List and Session Filtering
--   **`fundednext_trading_system/config/settings.py`**:
-    -   Expanded the `ALLOWED_SYMBOLS` list to 26 instruments.
-    -   Added session times and a symbol-to-session mapping for the new `SessionFilter`.
--   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
-    -   Updated the `DUKASCOPY_SYMBOL_MAP` to include the new symbols.
--   **`fundednext_trading_system/trading_core/session_filter.py`**:
-    -   Created a new `SessionFilter` class to manage trading sessions.
--   **`fundednext_trading_system/trading_core/trade_gatekeeper.py`**:
-    -   Integrated the `SessionFilter` to block trades outside of allowed trading sessions.
--   **`fundednext_trading_system/main.py`**:
-    -   Instantiated the `SessionFilter` and passed it to the `TradeGatekeeper`.
--   **`README.md`**:
-    -   Updated documentation to reflect the expanded symbol list and the new session filtering feature.
-
-### Refactor: Dukascopy Data Feed
--   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**:
-    -   Refactored the data feed to use the `dukascopy-python` library instead of the `dukascopy-node` command-line tool.
--   **`fundednext_trading_system/requirements.txt`**:
-    -   Replaced the `dukascopy-1` git dependency with `dukascopy-python`.
--   **`fundednext_trading_system/tests/test_dukascopy_feed.py`**:
-    -   Updated the test to mock the `dukascopy-python` library.
--   **`README.md`**:
-    -   Updated documentation to reflect the new data feed implementation.
-
-### Refactor: Production Readiness and Cleanup
--   **`fundednext_trading_system/config/settings.py`**:
-    -   Changed the default `ENVIRONMENT` from "development" to "production" to ensure the system is production-first.
--   **`fundednext_trading_system/requirements.txt`**:
-    -   Restored pinned dependencies to ensure stable, reproducible builds.
--   **`fundednext_trading_system/dev_requirements.txt`**:
-    -   Correctly structured to reference `requirements.txt` and only add development-specific dependencies.
--   **Deleted Redundant Files**:
-    -   Removed `fundednext_trading_system/notebooks/`
--   **`README.md`**:
-    -   Updated documentation to reflect the production-first approach and latest changes.
-
-### Feat: Dukascopy Data, News Sentiment, and Correlation Matrix
--   **`fundednext_trading_system/execution/dukascopy_data_feed.py`**: Added a new data feed from Dukascopy for model training.
--   **`fundednext_trading_system/trading_core/news_sentiment.py`**: Added news sentiment analysis using `yfinance` and `TextBlob`.
--   **`fundednext_trading_system/trading_core/correlation_manager.py`**: Added a correlation matrix to manage risk.
--   **`fundednext_trading_system/trading_core/risk_manager.py`**: Integrated the correlation matrix to block trades in highly correlated assets.
--   **`fundednext_trading_system/trading_core/signal_engine.py`**: Integrated news sentiment to adjust trade confidence.
-
-### Fix: `MetaTrader5` Library Selection and Startup Check
--   **`fundednext_trading_system/execution/mt5_data_feed.py`**: Made `MetaTrader5` library selection explicit based on the `ENVIRONMENT` variable.
--   **`fundednext_trading_system/offline_training/train_model.py`**: Added a startup check for the real `MetaTrader5` library in production.
-
-### Fix: Monte Carlo Validation Logic
--   **`fundednext_trading_system/offline_training/offline_training.py`**: Improved the `MonteCarloValidator` to provide a more realistic simulation.
+### Expansion to Hybrid 50-Symbol Strategy
+-   **Expanded symbols to 50**: Added AUDUSD, BTCUSD, ETHUSD, and various indices/commodities.
+-   **Hybrid Signal Engine**: Implemented Mean Reversion, Momentum, Pullback, and Breakout logics in `signal_engine.py`.
+-   **Automated Optimizer**: Added `optimizer.py` for per-symbol grid search optimization.
+-   **Tick Data Integration**: Updated `mt5_data_feed.py` to support `copy_ticks_from` and aggregation.
+-   **Dual-Layer Orchestrator**: Updated `main.py` with the ML gatekeeper and failover logic.
+-   **M5 Scalping Focus**: Shifted all strategy logic and data fetching to the 5-minute timeframe.

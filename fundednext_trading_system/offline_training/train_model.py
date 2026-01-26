@@ -7,8 +7,10 @@ import os
 import numpy as np
 
 from fundednext_trading_system.execution.yfinance_data_feed import YFinanceDataFeed
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
 from fundednext_trading_system.trading_core.signal_engine import SignalEngine
 from fundednext_trading_system.trading_core.ml_router import MLRouter
+from fundednext_trading_system.offline_training.optimizer import Optimizer, update_symbols_config
 from fundednext_trading_system.trading_core.execution_flags import ExecutionFlags, MLMode, AccountPhase, ExecutionMode
 from fundednext_trading_system.config.settings import TIMEFRAME_BARS, MODELS_DIR, ALLOWED_SYMBOLS, ENVIRONMENT
 from fundednext_trading_system.monitoring.logger import logger
@@ -58,7 +60,13 @@ def train_and_save_model():
     """
     logger.info("🚀 Starting offline model training process for each symbol...")
 
-    feed = YFinanceDataFeed()
+    if ENVIRONMENT == "production":
+        feed = MT5DataFeed()
+        timeframe = 5 # MT5.TIMEFRAME_M5 is usually 5
+    else:
+        feed = YFinanceDataFeed()
+        timeframe = 300 # 5 minutes in seconds
+
     signal_engine = SignalEngine(confidence_threshold=0.7)
     execution_flags = ExecutionFlags(
         account_phase=AccountPhase.CHALLENGE,
@@ -72,16 +80,29 @@ def train_and_save_model():
         os.makedirs(MODELS_DIR)
         logger.info(f"Created directory: {MODELS_DIR}")
 
-    start_date = datetime(2020, 1, 1)
-    end_date = datetime(2026, 1, 9)
+    start_date = datetime(2023, 1, 1)
+    end_date = datetime.now()
 
     for symbol in ALLOWED_SYMBOLS:
         logger.info(f"===== Processing symbol: {symbol} =====")
         logger.info(f"Fetching data for {symbol}...")
-        df = feed.get_candles(symbol, TIMEFRAME_BARS, start_date=start_date, end_date=end_date)
+
+        if ENVIRONMENT == "production":
+            # Use Tick Data aggregated to M5 for production
+            # Increased count to 500,000 for better historical coverage
+            ticks = feed.get_ticks(symbol, count=500000)
+            df = feed.aggregate_ticks_to_m5(ticks)
+        else:
+            df = feed.get_candles(symbol, timeframe, start_date=start_date, end_date=end_date)
+
         if df is None or df.empty or len(df) < 200:
             logger.warning(f"Insufficient data for {symbol}, skipping.")
             continue
+
+        # Automated Parameter Optimization
+        optimizer = Optimizer(df, symbol)
+        best_params = optimizer.find_best_params()
+        update_symbols_config(symbol, best_params)
 
         features = signal_engine.prepare_features(df)
 

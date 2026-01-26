@@ -1,12 +1,16 @@
 import pandas as pd
 import threading
-from fundednext_trading_system.execution.dukascopy_data_feed import DukascopyDataFeed
-from fundednext_trading_system.config.settings import ALLOWED_SYMBOLS, TIMEFRAME_BARS
+from fundednext_trading_system.execution.yfinance_data_feed import YFinanceDataFeed
+from fundednext_trading_system.execution.mt5_data_feed import MT5DataFeed
+from fundednext_trading_system.config.settings import ALLOWED_SYMBOLS, TIMEFRAME_BARS, ENVIRONMENT
 from fundednext_trading_system.monitoring.logger import logger
 
 class CorrelationManager:
     def __init__(self, days_back=30):
-        self.data_feed = DukascopyDataFeed()
+        if ENVIRONMENT == "production":
+            self.data_feed = MT5DataFeed()
+        else:
+            self.data_feed = YFinanceDataFeed()
         self.correlation_matrix = None
         self.matrix_ready = False
 

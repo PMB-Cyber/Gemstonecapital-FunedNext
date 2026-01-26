@@ -16,7 +16,11 @@ ALLOWED_SYMBOLS = [
     "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADJPY", "CHFJPY",
     "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "GBPAUD",
     "GBPJPY", "NZDUSD", "USDCAD", "USDCHF", "GER30", "UK100",
-    "SPX500", "XAGUSD"
+    "SPX500", "XAGUSD", "AUDUSD", "BTCUSD", "ETHUSD", "EURNZD",
+    "GBPNZD", "GBPCAD", "NZDCAD", "CADCHF", "NZDCHF", "USDZAR",
+    "USDMXN", "USDNOK", "USDSEK", "EURNOK", "EURSEK", "JP225",
+    "HK50", "STOXX50E", "USOIL", "UKOIL", "COPPER", "COCOA",
+    "SUGAR", "COFFEE"
 ]
 
 # =========================================================
@@ -149,4 +153,28 @@ SYMBOL_SESSIONS = {
     "UK100": ["LONDON"],
     "SPX500": ["NEW_YORK"],
     "XAGUSD": ["LONDON", "NEW_YORK"],
+    "AUDUSD": ["TOKYO", "NEW_YORK"],
+    "BTCUSD": ["TOKYO", "LONDON", "NEW_YORK"],
+    "ETHUSD": ["TOKYO", "LONDON", "NEW_YORK"],
+    "EURNZD": ["TOKYO", "LONDON"],
+    "GBPNZD": ["TOKYO", "LONDON"],
+    "GBPCAD": ["LONDON", "NEW_YORK"],
+    "NZDCAD": ["TOKYO", "NEW_YORK"],
+    "CADCHF": ["LONDON"],
+    "NZDCHF": ["TOKYO", "LONDON"],
+    "USDZAR": ["NEW_YORK"],
+    "USDMXN": ["NEW_YORK"],
+    "USDNOK": ["LONDON"],
+    "USDSEK": ["LONDON"],
+    "EURNOK": ["LONDON"],
+    "EURSEK": ["LONDON"],
+    "JP225": ["TOKYO"],
+    "HK50": ["TOKYO"],
+    "STOXX50E": ["LONDON"],
+    "USOIL": ["LONDON", "NEW_YORK"],
+    "UKOIL": ["LONDON", "NEW_YORK"],
+    "COPPER": ["LONDON", "NEW_YORK"],
+    "COCOA": ["LONDON", "NEW_YORK"],
+    "SUGAR": ["LONDON", "NEW_YORK"],
+    "COFFEE": ["LONDON", "NEW_YORK"],
 }

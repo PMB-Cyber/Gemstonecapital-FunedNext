@@ -148,18 +148,44 @@ def signal_generation_worker(
     features, df = features.align(df, join='inner', axis=0)
     ml_signal = ml_router.infer(features)
 
-    # Confidence gating
-    if ml_signal and ml_signal[1] < 0.7:
-        ml_signal = None
-
     if execution_flags.ml_mode == MLMode.TRAINING:
         ml_router.update_model(features, df)
 
-    # Rule-based fallback
-    signal = ml_signal or signal_engine.generate_signal(df, symbol, regime=regime)
-    if signal:
-        side, score = signal
-        potential_trades.append({"symbol": symbol, "side": side, "score": score, "df": df})
+    # Dual-layer logic: Rules generate baseline, ML acts as gatekeeper
+    rule_signal = signal_engine.generate_signal(df, symbol, regime=regime)
+
+    if rule_signal:
+        rule_side, rule_score, strategy = rule_signal
+
+        if ml_signal:
+            ml_side, ml_score = ml_signal
+            # ML confirms rule signal
+            if ml_side == rule_side and ml_score > 0.7:
+                potential_trades.append({
+                    "symbol": symbol, "side": rule_side, "score": rule_score,
+                    "strategy": strategy, "df": df
+                })
+                logger.info(f"✅ {symbol}: Rule signal ({strategy}) confirmed by ML ({ml_score:.2f})")
+            else:
+                logger.debug(f"❌ {symbol}: Rule signal ({strategy}) rejected by ML ({ml_side}, {ml_score:.2f})")
+        else:
+            # Failover: ML unavailable, use high-confidence rule signals
+            if rule_score >= 0.8:
+                potential_trades.append({
+                    "symbol": symbol, "side": rule_side, "score": rule_score,
+                    "strategy": strategy, "df": df
+                })
+                logger.warning(f"⚠️ {symbol}: ML unavailable, using high-confidence rule signal ({strategy})")
+    else:
+        # Backup: ML generates secondary signals if rules fail to catch a move
+        if ml_signal:
+            ml_side, ml_score = ml_signal
+            if ml_score > 0.9:
+                potential_trades.append({
+                    "symbol": symbol, "side": ml_side, "score": ml_score,
+                    "strategy": "ml_backup", "df": df
+                })
+                logger.info(f"🚀 {symbol}: ML backup signal triggered ({ml_side}, {ml_score:.2f})")
 
 # =========================================================
 # TRADE EXECUTION WORKER

@@ -6,7 +6,7 @@ from fundednext_trading_system.trading_core.correlation_manager import Correlati
 class TestCorrelationManager(unittest.TestCase):
 
     @patch('fundednext_trading_system.trading_core.correlation_manager.threading.Thread')
-    @patch('fundednext_trading_system.execution.dukascopy_data_feed.DukascopyDataFeed.get_candles')
+    @patch('fundednext_trading_system.execution.yfinance_data_feed.YFinanceDataFeed.get_candles')
     def test_correlation_matrix_calculation(self, mock_get_candles, mock_thread):
         # Mock the Thread class to prevent the background thread from starting
         mock_thread.return_value = MagicMock()

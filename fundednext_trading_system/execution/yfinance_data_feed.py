@@ -13,11 +13,19 @@ class YFinanceDataFeed:
         "EURAUD": "EURAUD=X", "EURCAD": "EURCAD=X", "EURCHF": "EURCHF=X",
         "EURGBP": "EURGBP=X", "EURJPY": "EURJPY=X", "GBPAUD": "GBPAUD=X",
         "GBPJPY": "GBPJPY=X", "NZDUSD": "NZDUSD=X", "USDCAD": "USDCAD=X",
-        "USDCHF": "USDCHF=X",
+        "USDCHF": "USDCHF=X", "AUDUSD": "AUDUSD=X", "EURNZD": "EURNZD=X",
+        "GBPNZD": "GBPNZD=X", "GBPCAD": "GBPCAD=X", "NZDCAD": "NZDCAD=X",
+        "CADCHF": "CADCHF=X", "NZDCHF": "NZDCHF=X", "USDZAR": "USDZAR=X",
+        "USDMXN": "USDMXN=X", "USDNOK": "USDNOK=X", "USDSEK": "USDSEK=X",
+        "EURNOK": "EURNOK=X", "EURSEK": "EURSEK=X",
         # Commodities
-        "XAUUSD": "GC=F", "XAGUSD": "SI=F",
+        "XAUUSD": "GC=F", "XAGUSD": "SI=F", "USOIL": "CL=F", "UKOIL": "BZ=F",
+        "COPPER": "HG=F", "COCOA": "CC=F", "SUGAR": "SB=F", "COFFEE": "KC=F",
         # Indices
-        "US30": "YM=F", "NDX100": "NQ=F", "GER30": "^GDAXI", "UK100": "^FTSE", "SPX500": "ES=F"
+        "US30": "YM=F", "NDX100": "NQ=F", "GER30": "^GDAXI", "UK100": "^FTSE",
+        "SPX500": "ES=F", "JP225": "^N225", "HK50": "^HSI", "STOXX50E": "^STOXX50E",
+        # Crypto
+        "BTCUSD": "BTC-USD", "ETHUSD": "ETH-USD"
     }
 
     def _timeframe_to_interval(self, timeframe_in_seconds):
